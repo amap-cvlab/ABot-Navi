@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RynnBrain | Home</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+
+<body>
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="container row">
+      <a class="brand" href="./index.html">RynnBrain</a>
+      <nav class="nav">
+        <a href="#abstract">Abstract</a>
+        <a href="#highlights">Highlights</a>
+        <a href="#results">Results</a>
+        <a href="#demos">Demos</a>
+        <a href="#resources">Resources</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="kicker">Embodied Foundation Models</div>
+      <h1>RynnBrain: Open Embodied Foundation Models</h1>
+
+      <p class="lede">
+        An embodied foundation model grounded in physical reality with egocentric cognition,
+        spatiotemporal grounding, physical-space reasoning, and physics-aware planning.
+      </p>
+
+      <!-- Links as pills -->
+      <div class="pillrow" id="resources">
+        <a class="pill" href="https://github.com/alibaba-damo-academy/RynnBrain.github.io" target="_blank" rel="noreferrer">GitHub</a>
+        <a class="pill" href="https://huggingface.co" target="_blank" rel="noreferrer">Hugging Face</a>
+        <a class="pill" href="https://www.modelscope.cn" target="_blank" rel="noreferrer">ModelScope</a>
+        <a class="pill" href="https://huggingface.co" target="_blank" rel="noreferrer">Benchmark</a>
+        <a class="pill pill-strong" href="https://huggingface.co" target="_blank" rel="noreferrer">Try</a>
+      </div>
+
+      <!-- Authors -->
+      <details class="authors">
+        <summary>Authors & contributors</summary>
+        <p>
+          Ronghao Dang*,†,‡ Jiayan Guo*,† Bohan Hou* Sicong Leng* ... (paste full list here)
+        </p>
+        <p class="muted">* Core contributors · † Project lead · ‡ Correspondence</p>
+      </details>
+    </section>
+
+    <!-- Abstract -->
+    <section class="section" id="abstract">
+      <h2>Abstract</h2>
+      <p>
+        We present RynnBrain, an embodied foundation model grounded in physical reality, designed for
+        egocentric cognition, spatiotemporal grounding, physical-space reasoning, and physics-aware planning.
+      </p>
+      <p>
+        RynnBrain is released in multiple variants and specialized models, enabling a broad range of embodied
+        AI tasks across perception, reasoning, and control.
+      </p>
+    </section>
+
+    <!-- Highlights -->
+    <section class="section" id="highlights">
+      <h2>Key highlights</h2>
+      <ul class="bullets">
+        <li><b>Comprehensive Egocentric Understanding</b>: fine-grained video understanding, embodied QA, counting, OCR.</li>
+        <li><b>Diverse Spatiotemporal Localization</b>: episodic memory; objects, target areas, motion trajectories.</li>
+        <li><b>Physical-Space Reasoning</b>: interleaves textual + spatial grounding for robust embodied reasoning.</li>
+        <li><b>Physics-Aware Planning</b>: integrates affordances and object information into downstream VLA planning.</li>
+      </ul>
+    </section>
+
+    <!-- Overview -->
+    <section class="section">
+      <h2>Overview</h2>
+      <figure class="figure">
+        <img src="https://alibaba-damo-academy.github.io/RynnBrain.github.io/assets/intro.png" alt="Overview figure">
+        <figcaption>Overview of RynnBrain capabilities across cognition, localization, reasoning, and planning.</figcaption>
+      </figure>
+    </section>
+
+    <!-- Results -->
+    <section class="section" id="results">
+      <h2>Results</h2>
+      <div class="grid2">
+        <figure class="figure">
+          <img src="https://alibaba-damo-academy.github.io/RynnBrain.github.io/assets/result-8b.png" alt="2B & 8B results">
+          <figcaption>RynnBrain 2B & 8B performance across multiple embodied benchmarks.</figcaption>
+        </figure>
+        <figure class="figure">
+          <img src="https://alibaba-damo-academy.github.io/RynnBrain.github.io/assets/frame.png" alt="Architecture figure">
+          <figcaption>Model architecture and capability mapping.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Demos -->
+    <section class="section" id="demos">
+      <h2>Demos</h2>
+
+      <details class="panel" open>
+        <summary>Skill demonstrations</summary>
+        <div class="panel-body">
+          <ul class="bullets">
+            <li>Put it back in its original position — object & spatial memory.</li>
+            <li>3 Gods Assembly (三仙归洞) — complex long-horizon video understanding.</li>
+            <li>Sorting and Disruption — classification and multi-task planning.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="panel">
+        <summary>Real-robot demos</summary>
+        <div class="panel-body">
+          <p class="muted">Embed or link your real-world robot demos here (MP4 / YouTube / Bilibili).</p>
+        </div>
+      </details>
+
+      <details class="panel">
+        <summary>Navigation demos</summary>
+        <div class="panel-body">
+          <p class="muted">Showcase navigation tasks, trajectories, and instruction-following behaviors.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- Bench -->
+    <section class="section">
+      <h2>RynnBrain Bench</h2>
+      <figure class="figure">
+        <img src="https://alibaba-damo-academy.github.io/RynnBrain.github.io/assets/bench.png" alt="RynnBrain Bench">
+        <figcaption>Benchmark taxonomy over cognition, localization, and planning tasks.</figcaption>
+      </figure>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="muted">© RynnBrain Team · DAMO Academy, Alibaba Group</span>
+    </footer>
+  </main>
+</body>
+</html>
