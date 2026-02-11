@@ -1897,6 +1897,10 @@
             <div class="label">Unified Tasks</div>
         </div>
         <div class="hero-stat">
+            <div class="number" data-target="7" data-suffix="">0</div>
+            <div class="label">SOTA Benchmarks</div>
+        </div>
+        <div class="hero-stat">
             <div class="number" data-target="16.9" data-suffix="M">0</div>
             <div class="label">Expert Trajectories</div>
         </div>
@@ -1905,17 +1909,17 @@
             <div class="label">3D Scenes</div>
         </div>
         <div class="hero-stat">
-            <div class="number" data-target="7" data-suffix="">0</div>
-            <div class="label">SOTA Benchmarks</div>
+            <div class="number" data-target="5.0" data-suffix="M">0</div>
+            <div class="label">Reasoning Samples</div>
         </div>
         <div class="hero-stat">
-            <div class="number" data-target="10.3">0</div>
+            <div class="number" data-target="10.7">0</div>
             <div class="label">km² Coverage</div>
         </div>
     </div>
 
     <div class="hero-actions">
-        <a href="#" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Read Paper</a>
+        <a href="https://github.com/amap-cvlab/ABot-Navigation/blob/main/ABot-N0_Technical_Report.pdf" target="_blank" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Read Paper</a>
         <!-- <a href="#" class="btn btn-secondary"><i class="fab fa-github"></i> View Code</a> -->
         <a href="#visualization" class="btn btn-secondary"><i class="fas fa-play-circle"></i> Watch Demos</a>
     </div>
@@ -1942,7 +1946,7 @@
         </p>
         <br>
         <p class="abstract-text">
-            To support large-scale learning, we developed the <strong>ABot-N0 Data Engine</strong>, curating <strong>16.9M</strong> expert trajectories and <strong>5.0M</strong> reasoning samples across <strong>7,802</strong> high-fidelity 3D scenes (<strong>10.3 km²</strong>). ABot-N0 achieves new <strong>SOTA</strong> performance across <strong>7 benchmarks</strong>, significantly outperforming specialized models. Furthermore, our Agentic Navigation System integrates a planner with hierarchical topological memory, enabling robust, long-horizon missions in dynamic real-world environments.
+            To support large-scale learning, we developed the <strong>ABot-N0 Data Engine</strong>, curating <strong>16.9M</strong> expert trajectories and <strong>5.0M</strong> reasoning samples across <strong>7,802</strong> high-fidelity 3D scenes (<strong>10.7 km²</strong>). ABot-N0 achieves new <strong>SOTA</strong> performance across <strong>7 benchmarks</strong>, significantly outperforming specialized models. Furthermore, our Agentic Navigation System integrates a planner with hierarchical topological memory, enabling robust, long-horizon missions in dynamic real-world environments.
         </p>
 
         <!-- 5 Tasks -->
@@ -2037,7 +2041,7 @@
                 <div class="unit">3D Scenes</div>
             </div>
             <div class="data-highlight">
-                <div class="number">10.3 km²</div>
+                <div class="number">10.7 km²</div>
                 <div class="unit">Total Area Coverage</div>
             </div>
             <div class="data-highlight">
@@ -2059,14 +2063,14 @@
                     <div class="data-pillar-number">01</div>
                     <div class="data-pillar-meta">
                         <h3>High-Fidelity 3D Scene Ecosystem</h3>
-                        <p class="data-pillar-stats"><span class="dp-stat">7,802 Scenes</span><span class="dp-divider">·</span><span class="dp-stat">10.3 km²</span><span class="dp-divider">·</span><span class="dp-stat">384,754m Nav Graphs</span></p>
+                        <p class="data-pillar-stats"><span class="dp-stat">7,802 Scenes</span><span class="dp-divider">·</span><span class="dp-stat">10.7 km²</span><span class="dp-divider">·</span><span class="dp-stat">384,754m Nav Graphs</span></p>
                     </div>
                 </div>
                 <div class="data-pillar-body">
                     <div class="figure-block" style="margin: 0;">
                         <img src="static/images/datasource.jpg" alt="3D Scene Ecosystem & Data Sources">
                         <div class="fig-caption">
-                            <strong>3D Scene Ecosystem & Statistics.</strong> 7,802 high-fidelity 3D scenes covering 6.25 km² indoor (homes, offices, malls, stations) and 4.05 km² outdoor (intersections, parks, SocCity) environments. All scenes are annotated with traversable navigation graphs for collision-free trajectory synthesis.
+                            <strong>3D Scene Ecosystem & Statistics.</strong> 7,802 high-fidelity 3D scenes covering 6.25 km² indoor (homes, offices, malls, stations) and 4.42 km² outdoor (intersections, parks, SocCity) environments. All scenes are annotated with traversable navigation graphs for collision-free trajectory synthesis.
                         </div>
                     </div>
                 </div>
@@ -2592,7 +2596,7 @@
         <div class="section-header reveal">
             <div class="section-tag"><i class="fas fa-images"></i> Visualization</div>
             <h2 class="section-title">Deployment Visualization</h2>
-            <p class="section-desc">Real-world navigation trajectories and application scenarios across diverse environments.</p>
+            <p class="section-desc" style="white-space: nowrap;">Real-world navigation trajectories and application scenarios across diverse environments.</p>
         </div>
 
         <div class="vis-pillars">
@@ -2753,7 +2757,7 @@
      FOOTER
      ============================================ -->
 <footer class="footer">
-    <p>ABot-N0 &copy; 2025 AMAP CV Lab &nbsp;|&nbsp; <a href="#">Project Page</a> &nbsp;|&nbsp; <!-- <a href="#">GitHub</a> &nbsp;|&nbsp; --> <a href="#">Paper</a></p>
+    <p>ABot-N0 &copy; 2025 AMAP CV Lab &nbsp;
 </footer>
 
 <!-- ============================================
