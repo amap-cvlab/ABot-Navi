@@ -1,26 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ABot-Navi | Home</title>
+  <title>ABot-Navi | 项目导航</title>
+  <link rel="stylesheet" href="ABot-N0/assets/style.css" />
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
-    h1 { margin-bottom: 0.5rem; }
-    .muted { color: #666; }
-    ul { line-height: 1.8; }
-    a { color: #0066cc; }
+    .hero h1 { font-size: 38px; }
+    .version-grid { display: grid; gap: 14px; margin-top: 12px; }
+    .version-card {
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      background: var(--card);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .version-card:hover {
+      border-color: var(--muted);
+      box-shadow: 0 4px 20px rgba(0,0,0,.06);
+    }
+    .version-card h3 { margin: 0 0 6px; font-size: 18px; letter-spacing: -.01em; }
+    .version-card p { margin: 0; color: var(--muted); font-size: 14px; }
   </style>
 </head>
 <body>
-  <h1>ABot-Navi</h1>
-  <p class="muted">项目导航与版本入口</p>
+  <header class="topbar">
+    <div class="container row">
+      <a class="brand" href="./index.html">ABot-Navi</a>
+      <nav class="nav">
+        <a href="#versions">版本</a>
+      </nav>
+    </div>
+  </header>
 
-  <h2>版本</h2>
-  <ul>
-    <li><a href="ABot-N0/index.html">ABot-N0</a> — 通过链接访问 N0 版本</li>
-  </ul>
+  <main class="container">
+    <section class="hero">
+      <div class="kicker">项目导航与版本入口</div>
+      <h1>ABot-Navi</h1>
+      <p class="lede">
+        集中访问各版本 ABot 导航与演示，更多版本将陆续在此页更新。
+      </p>
+      <div class="pillrow">
+        <a class="pill pill-strong" href="#versions">查看版本</a>
+      </div>
+    </section>
 
-  <p class="muted">更多版本后续可在此页添加链接。</p>
+    <section class="section" id="versions">
+      <h2>版本</h2>
+      <div class="version-grid">
+        <a class="version-card" href="ABot-N0/index.html">
+          <h3>ABot-N0</h3>
+          <p>通过链接访问 N0 版本 · RynnBrain 风格主页</p>
+        </a>
+      </div>
+      <p class="muted" style="margin-top: 14px;">更多版本后续可在此页添加链接。</p>
+    </section>
+
+    <footer class="footer">
+      <span class="muted">ABot-Navi · 项目导航</span>
+    </footer>
+  </main>
 </body>
 </html>
