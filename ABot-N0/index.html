@@ -1,148 +1,3018 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ABot-Navi | ABot-N0</title>
-  <link rel="stylesheet" href="assets/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABot-N0: VLA Foundation Model for Versatile Embodied Navigation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ============================================
+           CSS VARIABLES & RESET
+           ============================================ */
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #0f0f1a;
+            --bg-card: rgba(15, 15, 30, 0.6);
+            --bg-card-hover: rgba(20, 20, 40, 0.8);
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b8;
+            --text-muted: #6a6a80;
+            --accent-cyan: #00d4ff;
+            --accent-blue: #4d7cff;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --gradient-main: linear-gradient(135deg, #00d4ff 0%, #4d7cff 50%, #8b5cf6 100%);
+            --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);
+            --gradient-cool: linear-gradient(135deg, #10b981 0%, #00d4ff 100%);
+            --border-color: rgba(100, 100, 180, 0.15);
+            --glow-cyan: 0 0 20px rgba(0, 212, 255, 0.3);
+            --glow-purple: 0 0 20px rgba(139, 92, 246, 0.3);
+            --section-gap: 120px;
+            --content-width: 1200px;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           PARTICLE CANVAS
+           ============================================ */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0 40px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(10, 10, 15, 0.95);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-brand-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-brand-link:hover {
+            opacity: 0.85;
+        }
+
+        .nav-brand-link img {
+            height: 28px;
+            width: 28px;
+            border-radius: 6px;
+        }
+
+        .nav-brand-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .nav-brand-text .brand-sep {
+            margin: 0 6px;
+            color: rgba(255, 255, 255, 0.25);
+            font-weight: 300;
+        }
+
+        .nav-logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-main);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* More Research Dropdown */
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .nav-dropdown-trigger {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s ease;
+            user-select: none;
+            position: relative;
+            line-height: 1;
+        }
+
+        .nav-dropdown-trigger::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-main);
+            transition: width 0.3s ease;
+        }
+
+        .nav-dropdown:hover .nav-dropdown-trigger::after {
+            width: 100%;
+        }
+
+        .nav-dropdown-trigger:hover,
+        .nav-dropdown:hover .nav-dropdown-trigger {
+            color: var(--text-primary);
+        }
+
+        .nav-dropdown-trigger .chevron {
+            font-size: 0.6rem;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-dropdown:hover .nav-dropdown-trigger .chevron {
+            transform: rotate(180deg);
+        }
+
+        .nav-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 16px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-6px);
+            min-width: 180px;
+            background: rgba(16, 16, 24, 0.96);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 6px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+        }
+
+        .nav-dropdown:hover .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .nav-dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 0;
+            right: 0;
+            height: 12px;
+        }
+
+        .nav-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+            font-size: 0.84rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .nav-dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-primary);
+        }
+
+        .nav-dropdown-item i.item-icon {
+            font-size: 0.8rem;
+            width: 16px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .nav-dropdown-item:nth-child(1) i.item-icon { color: var(--accent-cyan); }
+        .nav-dropdown-item:nth-child(2) i.item-icon { color: var(--accent-purple); }
+        .nav-dropdown-item:nth-child(3) i.item-icon { color: #4d7cff; }
+        .nav-dropdown-item:nth-child(4) i.item-icon { color: var(--accent-pink); }
+        .nav-dropdown-item:nth-child(5) i.item-icon { color: #f59e0b; }
+        .nav-dropdown-item:nth-child(6) i.item-icon { color: #10b981; }
+        .nav-dropdown-item:nth-child(7) i.item-icon { color: #f472b6; }
+
+        .nav-dropdown-item .ext-arrow {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-left: auto;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .nav-dropdown-item:hover .ext-arrow {
+            opacity: 1;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            background: transparent;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .nav-btn.primary {
+            background: var(--gradient-main);
+            border: none;
+            color: #fff;
+        }
+
+        .nav-btn.primary:hover {
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 40px 80px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 50px;
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            color: var(--accent-cyan);
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 32px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse-dot 2s ease infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 6vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 8px;
+            animation: fadeInUp 0.8s ease 0.1s both;
+        }
+
+        .hero h1 .model-name {
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            font-weight: 400;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 16px auto 40px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat .number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .hero-stat .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 4px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-main);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.25);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 40px rgba(0, 212, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-cyan);
+            transform: translateY(-2px);
+        }
+
+        .hero-image-wrapper {
+            width: 100%;
+            max-width: 1100px;
+            margin-top: 60px;
+            animation: fadeInUp 0.8s ease 0.5s both;
+            position: relative;
+        }
+
+        .hero-image-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 18px;
+            background: var(--gradient-main);
+            opacity: 0.3;
+            filter: blur(20px);
+            z-index: -1;
+        }
+
+        .hero-image-wrapper img {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* ============================================
+           SECTION STYLES
+           ============================================ */
+        .section {
+            position: relative;
+            z-index: 1;
+            padding: var(--section-gap) 40px;
+        }
+
+        .section-inner {
+            max-width: var(--content-width);
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            color: var(--accent-purple);
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        .section-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           TASK CARDS (5 Tasks)
+           ============================================ */
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 48px;
+        }
+
+        .task-card {
+            position: relative;
+            padding: 32px 24px;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-main);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .task-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .task-card:hover::before {
+            opacity: 1;
+        }
+
+        .task-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 16px;
+        }
+
+        .task-card:nth-child(1) .task-icon { background: rgba(0, 212, 255, 0.1); color: var(--accent-cyan); }
+        .task-card:nth-child(2) .task-icon { background: rgba(77, 124, 255, 0.1); color: var(--accent-blue); }
+        .task-card:nth-child(3) .task-icon { background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); }
+        .task-card:nth-child(4) .task-icon { background: rgba(236, 72, 153, 0.1); color: var(--accent-pink); }
+        .task-card:nth-child(5) .task-icon { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); }
+
+        .task-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .task-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           ARCHITECTURE SECTION
+           ============================================ */
+        .arch-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 48px;
+        }
+
+        .arch-image {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .arch-image img {
+            width: 100%;
+            display: block;
+        }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .pillar-card {
+            padding: 32px 24px;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .pillar-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .pillar-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .pillar-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .pillar-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           DATA ENGINE SECTION
+           ============================================ */
+        .data-highlight-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+
+        .data-highlight {
+            padding: 28px 20px;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .data-highlight:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .data-highlight .number {
+            font-size: 2rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .data-highlight .unit {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Data Engine - Three Pillars */
+        .data-pillars {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .data-pillar {
+            border-radius: 18px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .data-pillar:hover {
+            border-color: rgba(0, 212, 255, 0.2);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .data-pillar-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 212, 255, 0.02);
+        }
+
+        .data-pillar-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .data-pillar-meta h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .data-pillar-stats {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            flex-wrap: wrap;
+        }
+
+        .dp-stat {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .dp-divider {
+            margin: 0 10px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .data-pillar-body {
+            padding: 24px 28px;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .data-pillar:nth-child(1) .data-pillar-number { background: linear-gradient(135deg, #00d4ff, #4d7cff); -webkit-background-clip: text; background-clip: text; }
+        .data-pillar:nth-child(2) .data-pillar-number { background: linear-gradient(135deg, #4d7cff, #8b5cf6); -webkit-background-clip: text; background-clip: text; }
+        .data-pillar:nth-child(3) .data-pillar-number { background: linear-gradient(135deg, #8b5cf6, #ec4899); -webkit-background-clip: text; background-clip: text; }
+
+        .data-pillar:nth-child(1) .dp-stat { color: var(--accent-cyan); }
+        .data-pillar:nth-child(2) .dp-stat { color: var(--accent-purple); }
+        .data-pillar:nth-child(3) .dp-stat { color: var(--accent-pink); }
+
+        @media (max-width: 768px) {
+            .data-pillar-header { padding: 18px 20px; gap: 14px; }
+            .data-pillar-body { padding: 18px 20px; }
+            .data-pillar-number { font-size: 1.4rem; }
+            .data-pillar-meta h3 { font-size: 1rem; }
+        }
+
+        /* ============================================
+           TRAJECTORY HORIZONTAL SCROLL CARDS
+           ============================================ */
+        .traj-scroll-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .traj-scroll-btn {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .traj-scroll-btn:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .traj-scroll-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 8px 0;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .traj-scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .traj-card {
+            flex: 0 0 280px;
+            border-radius: 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .traj-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+        }
+
+        .traj-card-img {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .traj-card-img::after {
+            content: '\f00e';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.5);
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .traj-card:hover .traj-card-img::after {
+            opacity: 1;
+        }
+
+        .traj-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 6px;
+            transition: transform 0.4s ease;
+        }
+
+        .traj-card:hover .traj-card-img img {
+            transform: scale(1.03);
+        }
+
+        /* Lightbox */
+        .lightbox-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(12px);
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+            padding: 40px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .lightbox-overlay.active {
+            display: flex;
+        }
+
+        .lightbox-overlay img {
+            max-width: 92vw;
+            max-height: 88vh;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6);
+            object-fit: contain;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 28px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .traj-card-body {
+            padding: 16px 18px 20px;
+        }
+
+        .traj-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: color-mix(in srgb, var(--badge-color) 12%, transparent);
+            color: var(--badge-color);
+            border: 1px solid color-mix(in srgb, var(--badge-color) 25%, transparent);
+            margin-bottom: 10px;
+        }
+
+        .traj-card-body h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .traj-card-body p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        @media (max-width: 768px) {
+            .traj-card {
+                flex: 0 0 260px;
+            }
+            .traj-scroll-btn {
+                display: none;
+            }
+        }
+
+        /* ============================================
+           TRAINING PIPELINE
+           ============================================ */
+        .training-timeline {
+            position: relative;
+            padding-left: 60px;
+        }
+
+        .training-timeline::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+        }
+
+        .training-phase {
+            position: relative;
+            margin-bottom: 48px;
+            padding: 32px;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+        }
+
+        .training-phase:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .training-phase::before {
+            content: '';
+            position: absolute;
+            left: -44px;
+            top: 36px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-cyan);
+            background: var(--bg-primary);
+        }
+
+        .training-phase:nth-child(2)::before { border-color: var(--accent-purple); }
+        .training-phase:nth-child(3)::before { border-color: var(--accent-pink); }
+
+        .phase-number {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .training-phase:nth-child(2) .phase-number { color: var(--accent-purple); }
+        .training-phase:nth-child(3) .phase-number { color: var(--accent-pink); }
+
+        .training-phase h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .training-phase p {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .formula-box {
+            margin-top: 16px;
+            padding: 16px 20px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.88rem;
+            color: var(--accent-cyan);
+            overflow-x: auto;
+        }
+
+        /* ============================================
+           BENCHMARK RESULTS
+           ============================================ */
+        .benchmark-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .benchmark-tab {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .benchmark-tab.active {
+            background: var(--gradient-main);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .benchmark-tab:hover:not(.active) {
+            border-color: var(--accent-cyan);
+            color: var(--text-primary);
+        }
+
+        .benchmark-panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .benchmark-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-table-wrapper {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        .result-table thead {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .result-table th {
+            padding: 14px 16px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .result-table td {
+            padding: 12px 16px;
+            text-align: center;
+            border-bottom: 1px solid rgba(100, 100, 180, 0.08);
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .result-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .result-table .highlight-row {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .result-table .highlight-row td {
+            color: var(--accent-cyan);
+            font-weight: 700;
+        }
+
+        .result-table .best {
+            color: var(--accent-cyan) !important;
+            font-weight: 700 !important;
+        }
+
+        .result-table .method-name {
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-note {
+            margin-top: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        .result-note strong {
+            color: var(--accent-cyan);
+        }
+
+        /* ============================================
+           AGENTIC SYSTEM
+           ============================================ */
+        .agentic-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 48px;
+        }
+
+        .agentic-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 32px;
+        }
+
+        .agentic-feature {
+            padding: 28px 24px;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+        }
+
+        .agentic-feature:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .agentic-feature h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .agentic-feature p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           HARDWARE / DEPLOYMENT
+           ============================================ */
+        .deploy-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .deploy-specs {
+            display: grid;
+            gap: 16px;
+        }
+
+        .spec-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+        }
+
+        .spec-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent-cyan);
+            flex-shrink: 0;
+        }
+
+        .spec-item h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .spec-item p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .deploy-image {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .deploy-image img {
+            width: 100%;
+            display: block;
+        }
+
+        /* ============================================
+           DEMO VIDEO SECTION
+           ============================================ */
+        .demo-section {
+            background: linear-gradient(180deg, var(--bg-primary) 0%, rgba(0, 212, 255, 0.03) 50%, var(--bg-primary) 100%);
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .demo-card {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            transition: all 0.4s ease;
+            aspect-ratio: 16/9;
+        }
+
+        .demo-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .demo-card .demo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            gap: 12px;
+        }
+
+        .demo-card .play-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--gradient-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .demo-card:hover .play-icon {
+            transform: scale(1.1);
+            box-shadow: 0 8px 40px rgba(0, 212, 255, 0.5);
+        }
+
+        .demo-card .demo-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .demo-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .demo-card video, .demo-card iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ============================================
+           VISUALIZATION / GALLERY
+           ============================================ */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .gallery-card {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            transition: all 0.4s ease;
+        }
+
+        .gallery-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .gallery-card img {
+            width: 100%;
+            display: block;
+            cursor: zoom-in;
+        }
+
+        .gallery-card .caption {
+            padding: 16px 20px;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* ============================================
+           VISUALIZATION PILLARS
+           ============================================ */
+        .vis-pillars {
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+        }
+
+        .vis-pillar {
+            border-radius: 18px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .vis-pillar:hover {
+            border-color: rgba(0, 212, 255, 0.2);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .vis-pillar-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 212, 255, 0.02);
+        }
+
+        .vis-pillar-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            color: #fff;
+        }
+
+        .vis-pillar:nth-child(1) .vis-pillar-icon { background: linear-gradient(135deg, #00d4ff, #4d7cff); }
+        .vis-pillar:nth-child(2) .vis-pillar-icon { background: linear-gradient(135deg, #4d7cff, #8b5cf6); }
+        .vis-pillar:nth-child(3) .vis-pillar-icon { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+
+        .vis-pillar-meta h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .vis-pillar-meta p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .vis-pillar-body {
+            padding: 24px 28px;
+        }
+
+        .vis-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .vis-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .vis-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+        .vis-item {
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vis-item:hover {
+            border-color: rgba(0, 212, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .vis-item .vis-img-wrap {
+            width: 100%;
+            overflow: hidden;
+            cursor: zoom-in;
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .vis-item .vis-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .vis-item:hover .vis-img-wrap img {
+            transform: scale(1.03);
+        }
+
+        /* Short-range tasks: wider images ~3:1 */
+        .vis-pillar:nth-child(1) .vis-img-wrap {
+            aspect-ratio: 16 / 6;
+        }
+
+        /* Long-range tasks: mixed ratios, use balanced ratio */
+        .vis-pillar:nth-child(2) .vis-img-wrap {
+            aspect-ratio: 16 / 7;
+        }
+
+        /* Application: taller image */
+        .vis-pillar:nth-child(3) .vis-img-wrap {
+            aspect-ratio: 16 / 12;
+        }
+
+        .vis-item .vis-label {
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vis-item .vis-label .vis-tag {
+            font-size: 0.72rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent-cyan);
+            flex-shrink: 0;
+        }
+
+        .vis-pillar:nth-child(2) .vis-tag { background: rgba(77, 124, 255, 0.1); color: var(--accent-purple); }
+        .vis-pillar:nth-child(3) .vis-tag { background: rgba(236, 72, 153, 0.1); color: var(--accent-pink); }
+
+        .vis-placeholder {
+            border-radius: 14px;
+            border: 2px dashed rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.01);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            gap: 8px;
+        }
+
+        .vis-placeholder i {
+            font-size: 1rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .vis-pillar-header { padding: 18px 20px; gap: 14px; }
+            .vis-pillar-body { padding: 18px 20px; }
+            .vis-pillar-icon { width: 40px; height: 40px; font-size: 1.1rem; }
+            .vis-pillar-meta h3 { font-size: 1rem; }
+            .vis-grid.cols-2, .vis-grid.cols-3 { grid-template-columns: 1fr; }
+        }
+
+        /* ============================================
+           BIBTEX SECTION
+           ============================================ */
+        .bibtex-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .bibtex-box {
+            position: relative;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            overflow-x: auto;
+        }
+
+        .bibtex-copy {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .bibtex-copy:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            position: relative;
+            z-index: 1;
+            padding: 48px 40px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        /* ============================================
+           SCROLL ANIMATIONS
+           ============================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================
+           GLOW DIVIDER
+           ============================================ */
+        .glow-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-purple), transparent);
+            opacity: 0.3;
+            margin: 0;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 1024px) {
+            .pillars-grid { grid-template-columns: 1fr; }
+            .deploy-grid { grid-template-columns: 1fr; }
+            .agentic-features { grid-template-columns: 1fr; }
+            .data-highlight-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 20px; }
+            .nav-links { display: none; }
+            .nav-brand-text { display: none; }
+            .nav-brand-link img { height: 24px; width: 24px; }
+            .nav-brand { gap: 10px; }
+            .section { padding: 80px 20px; }
+            .hero { padding: 100px 20px 60px; }
+            .hero-stats { gap: 24px; }
+            .demo-grid { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .benchmark-tabs { gap: 4px; }
+            .benchmark-tab { padding: 8px 12px; font-size: 0.78rem; }
+            .data-highlight-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* ============================================
+           SCROLLBAR
+           ============================================ */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100, 100, 180, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 100, 180, 0.5);
+        }
+
+        /* ============================================
+           FLOATING GRID BACKGROUND
+           ============================================ */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(100, 100, 180, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(100, 100, 180, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* ============================================
+           ABSTRACT SECTION
+           ============================================ */
+        .abstract-text {
+            max-width: 900px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+            line-height: 1.85;
+            color: var(--text-secondary);
+            text-align: justify;
+        }
+
+        .abstract-text strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* ============================================
+           IMAGE WITH CAPTION
+           ============================================ */
+        .figure-block {
+            margin: 40px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .figure-block img {
+            width: 100%;
+            display: block;
+            cursor: zoom-in;
+        }
+
+        .figure-block .fig-caption {
+            padding: 16px 24px;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            line-height: 1.6;
+        }
+
+        .figure-block .fig-caption strong {
+            color: var(--text-primary);
+        }
+    </style>
 </head>
-
 <body>
-  <!-- Top bar -->
-  <header class="topbar">
-    <div class="container row">
-      <a class="brand" href="./index.html">RynnBrain</a>
-      <nav class="nav">
-        <a href="#abstract">Abstract</a>
-        <a href="#highlights">Highlights</a>
-        <a href="#results">Results</a>
-        <a href="#demos">Demos</a>
-        <a href="#resources">Resources</a>
-      </nav>
+
+<!-- Background Grid -->
+<div class="grid-bg"></div>
+
+<!-- Particle Canvas -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- ============================================
+     NAVIGATION
+     ============================================ -->
+<nav class="navbar" id="navbar">
+    <div class="nav-brand">
+        <a href="https://amap-cvlab.github.io/" target="_blank" class="nav-brand-link" title="Alibaba AMAP CV Lab">
+            <img src="static/images/128px-128px.png" alt="AMAP CV Lab">
+            <span class="nav-brand-text">AMAP CV Lab<span class="brand-sep">｜</span>Alibaba Group</span>
+        </a>
     </div>
-  </header>
+    <ul class="nav-links">
+        <li><a href="#abstract">Abstract</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#data-engine">Data Engine</a></li>
+        <li><a href="#training">Training</a></li>
+        <li><a href="#results">Results</a></li>
+        <li><a href="#agentic">Agentic System</a></li>
+        <li><a href="#deployment">Deployment</a></li>
+        <li><a href="#visualization">Demos</a></li>
+        <li class="nav-dropdown">
+            <span class="nav-dropdown-trigger">More Research <i class="fas fa-chevron-down chevron"></i></span>
+            <div class="nav-dropdown-menu">    
+                <a href="https://ce-nav.github.io/" target="_blank" class="nav-dropdown-item">
+                    <i class="fas fa-robot item-icon"></i> CE-Nav (ICLR26) <i class="fas fa-external-link-alt ext-arrow"></i>
+                </a>
+                <a href="https://astra-amap.github.io/omninav.github.io/" target="_blank" class="nav-dropdown-item">
+                    <i class="fas fa-compass item-icon"></i> OmniNav (ICLR26) <i class="fas fa-external-link-alt ext-arrow"></i>
+                </a>
+                <a href="https://miv-xjtu.github.io/JanusVLN.github.io/" target="_blank" class="nav-dropdown-item">
+                    <i class="fas fa-brain item-icon"></i> JanusVLN (ICLR26) <i class="fas fa-external-link-alt ext-arrow"></i>
+                </a>
+                <a href="https://amap-eai.github.io/SocialNav/" target="_blank" class="nav-dropdown-item">
+                    <i class="fas fa-users item-icon"></i> SocialNav <i class="fas fa-external-link-alt ext-arrow"></i>
+                </a>
+                <a href="https://arxiv.org/abs/2602.06427" target="_blank" class="nav-dropdown-item">
+                    <i class="fas fa-door-open item-icon"></i> BridgeNav <i class="fas fa-external-link-alt ext-arrow"></i>
+                </a>
+                <a href="https://arxiv.org/abs/2512.02400" target="_blank" class="nav-dropdown-item">
+                    <i class="fas fa-search-location item-icon"></i> Nav-R² <i class="fas fa-external-link-alt ext-arrow"></i>
+                </a>
+                <a href="https://arxiv.org/abs/2512.01550" target="_blank" class="nav-dropdown-item">
+                    <i class="fas fa-eye item-icon"></i> NavForesee <i class="fas fa-external-link-alt ext-arrow"></i>
+                </a>
+            </div>
+        </li>
+    </ul>
+    <div class="nav-buttons">
+        <!-- <a href="#" class="nav-btn"><i class="fab fa-github"></i> Code</a> -->
+        <!-- <a href="#" class="nav-btn primary"><i class="fas fa-file-pdf"></i> Paper</a> -->
+        <div class="nav-logo">ABot-N0</div>
+    </div>
+</nav>
 
-  <main class="container">
-    <!-- Hero -->
-    <section class="hero">
-      <div class="kicker">Embodied Foundation Models</div>
-      <h1>RynnBrain: Open Embodied Foundation Models</h1>
+<!-- ============================================
+     HERO SECTION
+     ============================================ -->
+<section class="hero" id="hero">
+    <div class="hero-badge">
+        <span class="dot"></span>
+        Technical Report
+    </div>
+    <h1>
+        <span class="model-name">ABot-N0</span>
+    </h1>
+    <p class="hero-subtitle">
+        A Unified VLA Foundation Model for Versatile Embodied Navigation — Achieving Grand Unification Across 5 Core Tasks with a Hierarchical Brain-Action Architecture
+    </p>
 
-      <p class="lede">
-        An embodied foundation model grounded in physical reality with egocentric cognition,
-        spatiotemporal grounding, physical-space reasoning, and physics-aware planning.
-      </p>
+    <div class="hero-stats">
+        <div class="hero-stat">
+            <div class="number" data-target="5">0</div>
+            <div class="label">Unified Tasks</div>
+        </div>
+        <div class="hero-stat">
+            <div class="number" data-target="16.9" data-suffix="M">0</div>
+            <div class="label">Expert Trajectories</div>
+        </div>
+        <div class="hero-stat">
+            <div class="number" data-target="7802">0</div>
+            <div class="label">3D Scenes</div>
+        </div>
+        <div class="hero-stat">
+            <div class="number" data-target="7" data-suffix="">0</div>
+            <div class="label">SOTA Benchmarks</div>
+        </div>
+        <div class="hero-stat">
+            <div class="number" data-target="10.3">0</div>
+            <div class="label">km² Coverage</div>
+        </div>
+    </div>
 
-      <!-- Links as pills -->
-      <div class="pillrow" id="resources">
-        <a class="pill" href="https://github.com/alibaba-damo-academy/RynnBrain.github.io" target="_blank" rel="noreferrer">GitHub</a>
-        <a class="pill" href="https://huggingface.co" target="_blank" rel="noreferrer">Hugging Face</a>
-        <a class="pill" href="https://www.modelscope.cn" target="_blank" rel="noreferrer">ModelScope</a>
-        <a class="pill" href="https://huggingface.co" target="_blank" rel="noreferrer">Benchmark</a>
-        <a class="pill pill-strong" href="https://huggingface.co" target="_blank" rel="noreferrer">Try</a>
-      </div>
+    <div class="hero-actions">
+        <a href="#" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Read Paper</a>
+        <!-- <a href="#" class="btn btn-secondary"><i class="fab fa-github"></i> View Code</a> -->
+        <a href="#visualization" class="btn btn-secondary"><i class="fas fa-play-circle"></i> Watch Demos</a>
+    </div>
 
-      <!-- Authors -->
-      <details class="authors">
-        <summary>Authors & contributors</summary>
-        <p>
-          Ronghao Dang*,†,‡ Jiayan Guo*,† Bohan Hou* Sicong Leng* ... (paste full list here)
+    <div class="hero-image-wrapper">
+        <img src="static/images/overview.jpg" alt="ABot-N0 Overview" loading="lazy">
+    </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ============================================
+     ABSTRACT
+     ============================================ -->
+<section class="section" id="abstract">
+    <div class="section-inner reveal">
+        <div class="section-header">
+            <div class="section-tag"><i class="fas fa-scroll"></i> Abstract</div>
+            <h2 class="section-title">Grand Unification of Embodied Navigation</h2>
+        </div>
+
+        <p class="abstract-text">
+            Embodied navigation has long been fragmented by task-specific architectures. We introduce <strong>ABot-N0</strong>, a unified Vision-Language-Action (VLA) foundation model that achieves a "Grand Unification" across <strong>5 core tasks</strong>: Point-Goal, Object-Goal, Instruction-Following, POI-Goal, and Person-Following. ABot-N0 utilizes a hierarchical "Brain-Action" architecture, pairing an LLM-based <strong>Cognitive Brain</strong> for semantic reasoning with a Flow Matching-based <strong>Action Expert</strong> for precise, continuous trajectory generation.
         </p>
-        <p class="muted">* Core contributors · † Project lead · ‡ Correspondence</p>
-      </details>
-    </section>
+        <br>
+        <p class="abstract-text">
+            To support large-scale learning, we developed the <strong>ABot-N0 Data Engine</strong>, curating <strong>16.9M</strong> expert trajectories and <strong>5.0M</strong> reasoning samples across <strong>7,802</strong> high-fidelity 3D scenes (<strong>10.3 km²</strong>). ABot-N0 achieves new <strong>SOTA</strong> performance across <strong>7 benchmarks</strong>, significantly outperforming specialized models. Furthermore, our Agentic Navigation System integrates a planner with hierarchical topological memory, enabling robust, long-horizon missions in dynamic real-world environments.
+        </p>
 
-    <!-- Abstract -->
-    <section class="section" id="abstract">
-      <h2>Abstract</h2>
-      <p>
-        We present RynnBrain, an embodied foundation model grounded in physical reality, designed for
-        egocentric cognition, spatiotemporal grounding, physical-space reasoning, and physics-aware planning.
-      </p>
-      <p>
-        RynnBrain is released in multiple variants and specialized models, enabling a broad range of embodied
-        AI tasks across perception, reasoning, and control.
-      </p>
-    </section>
-
-    <!-- Highlights -->
-    <section class="section" id="highlights">
-      <h2>Key highlights</h2>
-      <ul class="bullets">
-        <li><b>Comprehensive Egocentric Understanding</b>: fine-grained video understanding, embodied QA, counting, OCR.</li>
-        <li><b>Diverse Spatiotemporal Localization</b>: episodic memory; objects, target areas, motion trajectories.</li>
-        <li><b>Physical-Space Reasoning</b>: interleaves textual + spatial grounding for robust embodied reasoning.</li>
-        <li><b>Physics-Aware Planning</b>: integrates affordances and object information into downstream VLA planning.</li>
-      </ul>
-    </section>
-
-    <!-- Overview -->
-    <section class="section">
-      <h2>Overview</h2>
-      <figure class="figure">
-        <img src="https://alibaba-damo-academy.github.io/RynnBrain.github.io/assets/intro.png" alt="Overview figure">
-        <figcaption>Overview of RynnBrain capabilities across cognition, localization, reasoning, and planning.</figcaption>
-      </figure>
-    </section>
-
-    <!-- Results -->
-    <section class="section" id="results">
-      <h2>Results</h2>
-      <div class="grid2">
-        <figure class="figure">
-          <img src="https://alibaba-damo-academy.github.io/RynnBrain.github.io/assets/result-8b.png" alt="2B & 8B results">
-          <figcaption>RynnBrain 2B & 8B performance across multiple embodied benchmarks.</figcaption>
-        </figure>
-        <figure class="figure">
-          <img src="https://alibaba-damo-academy.github.io/RynnBrain.github.io/assets/frame.png" alt="Architecture figure">
-          <figcaption>Model architecture and capability mapping.</figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <!-- Demos -->
-    <section class="section" id="demos">
-      <h2>Demos</h2>
-
-      <details class="panel" open>
-        <summary>Skill demonstrations</summary>
-        <div class="panel-body">
-          <ul class="bullets">
-            <li>Put it back in its original position — object & spatial memory.</li>
-            <li>3 Gods Assembly (三仙归洞) — complex long-horizon video understanding.</li>
-            <li>Sorting and Disruption — classification and multi-task planning.</li>
-          </ul>
+        <!-- 5 Tasks -->
+        <div class="tasks-grid">
+            <div class="task-card reveal">
+                <div class="task-icon"><i class="fas fa-crosshairs"></i></div>
+                <h3>Point-Goal</h3>
+                <p>Reach precise metric coordinates, serving as the foundational primitive for robust locomotion and obstacle avoidance.</p>
+            </div>
+            <div class="task-card reveal">
+                <div class="task-icon"><i class="fas fa-search"></i></div>
+                <h3>Object-Goal</h3>
+                <p>Actively search for and navigate to specific object categories in unseen environments with semantic reasoning.</p>
+            </div>
+            <div class="task-card reveal">
+                <div class="task-icon"><i class="fas fa-route"></i></div>
+                <h3>Instruction-Following</h3>
+                <p>Execute long-horizon, complex natural language paths with rigorous linguistic-action alignment.</p>
+            </div>
+            <div class="task-card reveal">
+                <div class="task-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <h3>POI-Goal</h3>
+                <p>Identify Points of Interest and navigate to their physical entrances, bridging outdoor-indoor environments.</p>
+            </div>
+            <div class="task-card reveal">
+                <div class="task-icon"><i class="fas fa-walking"></i></div>
+                <h3>Person-Following</h3>
+                <p>Real-time tracking of dynamic human targets — a critical social capability for human-robot interaction.</p>
+            </div>
         </div>
-      </details>
+    </div>
+</section>
 
-      <details class="panel">
-        <summary>Real-robot demos</summary>
-        <div class="panel-body">
-          <p class="muted">Embed or link your real-world robot demos here (MP4 / YouTube / Bilibili).</p>
+<div class="glow-divider"></div>
+
+<!-- ============================================
+     ARCHITECTURE
+     ============================================ -->
+<section class="section" id="architecture">
+    <div class="section-inner">
+        <div class="section-header reveal">
+            <div class="section-tag"><i class="fas fa-brain"></i> Model Architecture</div>
+            <h2 class="section-title">Hierarchical Brain-Action Design</h2>
+            <p class="section-desc">A unified VLA architecture that combines high-level cognitive reasoning with low-level motion planning, seamlessly generalizing across five core navigation tasks.</p>
         </div>
-      </details>
 
-      <details class="panel">
-        <summary>Navigation demos</summary>
-        <div class="panel-body">
-          <p class="muted">Showcase navigation tasks, trajectories, and instruction-following behaviors.</p>
+        <div class="arch-content reveal">
+            <div class="figure-block">
+                <img src="static/images/robonavi_architecture.jpg" alt="ABot-N0 Architecture">
+                <div class="fig-caption">
+                    <strong>The Architecture of ABot-N0.</strong> The model adopts a hierarchical "Brain-Action" design. The Universal Multi-Modal Encoder unifies heterogeneous inputs (RGB observations, visual history, and goal specifications) into a shared token sequence. The Cognitive Brain (LLM) supports dual-mode operation: a Reasoning Head for semantic understanding and an Action Head for motion planning. The Action Expert employs Flow Matching to generate trajectory distributions.
+                </div>
+            </div>
         </div>
-      </details>
-    </section>
 
-    <!-- Bench -->
-    <section class="section">
-      <h2>RynnBrain Bench</h2>
-      <figure class="figure">
-        <img src="https://alibaba-damo-academy.github.io/RynnBrain.github.io/assets/bench.png" alt="RynnBrain Bench">
-        <figcaption>Benchmark taxonomy over cognition, localization, and planning tasks.</figcaption>
-      </figure>
-    </section>
+        <div class="pillars-grid reveal">
+            <div class="pillar-card">
+                <div class="pillar-icon">🔍</div>
+                <h3>Universal Multi-Modal Encoder</h3>
+                <p>Unifies heterogeneous inputs — panoramic RGB, episodic visual memory, text goals, and geometric coordinates — into a shared latent space through flexible token-based encoding.</p>
+            </div>
+            <div class="pillar-card">
+                <div class="pillar-icon">🧠</div>
+                <h3>Cognitive Brain</h3>
+                <p>Built on Qwen3-4B LLM backbone. Features task-conditional dual heads: a Reasoning Head for scene analysis and spatial reasoning, and an Action Head for navigation decisions.</p>
+            </div>
+            <div class="pillar-card">
+                <div class="pillar-icon">⚡</div>
+                <h3>Action Expert</h3>
+                <p>Employs Flow Matching to generate precise, multi-modal trajectory distributions — 5 waypoints with position (x,y) and heading (θ) for continuous robot control.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <span class="muted">© RynnBrain Team · DAMO Academy, Alibaba Group</span>
-    </footer>
-  </main>
+<div class="glow-divider"></div>
+
+<!-- ============================================
+     DATA ENGINE
+     ============================================ -->
+<section class="section" id="data-engine">
+    <div class="section-inner">
+        <div class="section-header reveal">
+            <div class="section-tag"><i class="fas fa-database"></i> Data Engine</div>
+            <h2 class="section-title">The Largest Embodied Navigation Data Engine</h2>
+            <p class="section-desc">A unified synthesis pipeline integrating high-fidelity 3D scenes, expert trajectories, and cognitive reasoning samples at unprecedented scale.</p>
+        </div>
+
+        <div class="data-highlight-grid reveal">
+            <div class="data-highlight">
+                <div class="number">7,802</div>
+                <div class="unit">3D Scenes</div>
+            </div>
+            <div class="data-highlight">
+                <div class="number">10.3 km²</div>
+                <div class="unit">Total Area Coverage</div>
+            </div>
+            <div class="data-highlight">
+                <div class="number">16.9M</div>
+                <div class="unit">Expert Trajectories</div>
+            </div>
+            <div class="data-highlight">
+                <div class="number">5.0M</div>
+                <div class="unit">Reasoning Samples</div>
+            </div>
+        </div>
+
+        <!-- Three Pillars of Data Engine -->
+        <div class="data-pillars">
+
+            <!-- Pillar 1: 3D Scene Ecosystem -->
+            <div class="data-pillar reveal">
+                <div class="data-pillar-header">
+                    <div class="data-pillar-number">01</div>
+                    <div class="data-pillar-meta">
+                        <h3>High-Fidelity 3D Scene Ecosystem</h3>
+                        <p class="data-pillar-stats"><span class="dp-stat">7,802 Scenes</span><span class="dp-divider">·</span><span class="dp-stat">10.3 km²</span><span class="dp-divider">·</span><span class="dp-stat">384,754m Nav Graphs</span></p>
+                    </div>
+                </div>
+                <div class="data-pillar-body">
+                    <div class="figure-block" style="margin: 0;">
+                        <img src="static/images/datasource.jpg" alt="3D Scene Ecosystem & Data Sources">
+                        <div class="fig-caption">
+                            <strong>3D Scene Ecosystem & Statistics.</strong> 7,802 high-fidelity 3D scenes covering 6.25 km² indoor (homes, offices, malls, stations) and 4.05 km² outdoor (intersections, parks, SocCity) environments. All scenes are annotated with traversable navigation graphs for collision-free trajectory synthesis.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pillar 2: Trajectories Dataset -->
+            <div class="data-pillar reveal">
+                <div class="data-pillar-header">
+                    <div class="data-pillar-number">02</div>
+                    <div class="data-pillar-meta">
+                        <h3>Universal Trajectories Dataset</h3>
+                        <p class="data-pillar-stats"><span class="dp-stat">16.9M Trajectories</span><span class="dp-divider">·</span><span class="dp-stat">5 Navigation Tasks</span></p>
+                    </div>
+                </div>
+                <div class="data-pillar-body">
+                    <div class="traj-scroll-wrapper">
+                        <button class="traj-scroll-btn traj-scroll-left" onclick="scrollTraj(-1)" aria-label="Scroll left"><i class="fas fa-chevron-left"></i></button>
+                        <div class="traj-scroll-container" id="trajScroll">
+                            <div class="traj-card">
+                                <div class="traj-card-img" onclick="openLightbox(this.querySelector('img'))"><img src="static/images/pointgoal.jpg" alt="Point-Goal Data Pipeline"></div>
+                                <div class="traj-card-body">
+                                    <span class="traj-badge" style="--badge-color: var(--accent-cyan);">4.0M Trajectories</span>
+                                    <h4>Point-Goal</h4>
+                                    <p>2.0M pseudo-trajectories from internet videos, 1.7M synthetic from 3D scenes, 340K real-world robot demonstrations.</p>
+                                </div>
+                            </div>
+                            <div class="traj-card">
+                                <div class="traj-card-img" onclick="openLightbox(this.querySelector('img'))"><img src="static/images/objectgoal.jpg" alt="Object-Goal"></div>
+                                <div class="traj-card-body">
+                                    <span class="traj-badge" style="--badge-color: var(--accent-blue);">3.2M Trajectories</span>
+                                    <h4>Object-Goal</h4>
+                                    <p>Semantic search and discovery of specific object categories in unseen environments.</p>
+                                </div>
+                            </div>
+                            <div class="traj-card">
+                                <div class="traj-card-img" onclick="openLightbox(this.querySelector('img'))"><img src="static/images/interior_ins.jpg" alt="Instruction-Following"></div>
+                                <div class="traj-card-body">
+                                    <span class="traj-badge" style="--badge-color: var(--accent-purple);">2.8M Trajectories</span>
+                                    <h4>Instruction-Following</h4>
+                                    <p>VLN-CE R2R/RxR navigation, door-traversal, language-guided person search, and short-horizon atomic movement primitives.</p>
+                                </div>
+                            </div>
+                            <div class="traj-card">
+                                <div class="traj-card-img" onclick="openLightbox(this.querySelector('img'))"><img src="static/images/poitraj.jpg" alt="POI-Goal"></div>
+                                <div class="traj-card-body">
+                                    <span class="traj-badge" style="--badge-color: var(--accent-pink);">2.5M Trajectories</span>
+                                    <h4>POI-Goal</h4>
+                                    <p>Outdoor-to-indoor navigation via streetview OCR, trajectory-instruction alignment, and video generation.</p>
+                                </div>
+                            </div>
+                            <div class="traj-card">
+                                <div class="traj-card-img" onclick="openLightbox(this.querySelector('img'))"><img src="static/images/tracking.jpg" alt="Person-Following"></div>
+                                <div class="traj-card-body">
+                                    <span class="traj-badge" style="--badge-color: var(--accent-green);">4.0M Trajectories</span>
+                                    <h4>Person-Following</h4>
+                                    <p>3 proximity configs × 3 challenge categories (STT, DT, AT), plus 400K target-absent cases.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="traj-scroll-btn traj-scroll-right" onclick="scrollTraj(1)" aria-label="Scroll right"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pillar 3: Reasoning Dataset -->
+            <div class="data-pillar reveal">
+                <div class="data-pillar-header">
+                    <div class="data-pillar-number">03</div>
+                    <div class="data-pillar-meta">
+                        <h3>Cognitive Reasoning Dataset</h3>
+                        <p class="data-pillar-stats"><span class="dp-stat">5.0M Samples</span><span class="dp-divider">·</span><span class="dp-stat">6 Reasoning Tasks</span></p>
+                    </div>
+                </div>
+                <div class="data-pillar-body">
+                    <div class="figure-block" style="margin: 0;">
+                        <img src="static/images/reasoning.jpg" alt="Reasoning Dataset">
+                        <div class="fig-caption">
+                            <strong>Cognitive Reasoning Dataset.</strong> 5.0M samples spanning Navigable Areas Analysis (1.2M), Social Navigation CoT (0.8M), Instruction-Following Reasoning (1.3M), Object-Goal Reasoning (0.1M), POI Grounding (0.5M), and General VQA (1.1M) — grounding decision-making in explicit spatial-social logic.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ============================================
+     TRAINING
+     ============================================ -->
+<section class="section" id="training">
+    <div class="section-inner">
+        <div class="section-header reveal">
+            <div class="section-tag"><i class="fas fa-graduation-cap"></i> Training Recipe</div>
+            <h2 class="section-title">Three-Stage Curriculum Learning</h2>
+            <p class="section-desc">A progressive training pipeline ensuring the model first understands the world before learning to act within it.</p>
+        </div>
+
+        <div class="training-timeline reveal">
+            <div class="training-phase">
+                <div class="phase-number">Phase 1</div>
+                <h3>Cognitive Warm-up</h3>
+                <p>Before learning "how to move", the agent learns "what to see" and "how to reason." We freeze the Vision Encoder and fine-tune the LLM Brain using Next Token Prediction loss on diverse reasoning tasks. The Action Expert remains frozen, ensuring gradients focus purely on optimizing visual-linguistic representations.</p>
+            </div>
+
+            <div class="training-phase">
+                <div class="phase-number">Phase 2</div>
+                <h3>Unified Sensorimotor SFT</h3>
+                <p>All five navigation tasks are unified into a single multi-task training regime. A mixed-training strategy (20% reasoning replay) prevents catastrophic forgetting. Dual-Head Optimization jointly trains the AR Head and Action Expert.</p>
+                <div class="formula-box">
+                    ℒ<sub>Phase2</sub> = λ<sub>txt</sub> · ℒ<sub>NTP</sub>(θ<sub>brain</sub>) + λ<sub>flow</sub> · ℒ<sub>CFM</sub>(θ<sub>action</sub> | θ<sub>brain</sub>)
+                </div>
+            </div>
+
+            <div class="training-phase">
+                <div class="phase-number">Phase 3</div>
+                <h3>Post-Training Value Alignment via SAFE-GRPO</h3>
+                <p>A flow-based reinforcement learning framework that explicitly enforces social compliance. The Brain is frozen while the Action Expert is fine-tuned to maximize a composite reward balancing social compliance, expert similarity, smoothness, and efficiency.</p>
+                <div class="formula-box">
+                    ℛ = w<sub>soc</sub> · ℛ<sub>social</sub> + w<sub>exp</sub> · ℛ<sub>expert</sub> + w<sub>sm</sub> · ℛ<sub>smooth</sub> + w<sub>eff</sub> · ℛ<sub>eff</sub>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ============================================
+     BENCHMARK RESULTS
+     ============================================ -->
+<section class="section" id="results">
+    <div class="section-inner">
+        <div class="section-header reveal">
+            <div class="section-tag"><i class="fas fa-chart-bar"></i> Evaluation</div>
+            <h2 class="section-title">State-of-the-Art Across 7 Benchmarks</h2>
+            <p class="section-desc">Comprehensive evaluation demonstrating superior performance across all five navigation paradigms.</p>
+        </div>
+
+        <div class="benchmark-tabs reveal" id="benchmarkTabs">
+            <button class="benchmark-tab active" data-tab="pointgoal-open">Point-Goal (Open-loop)</button>
+            <button class="benchmark-tab" data-tab="pointgoal-close">Point-Goal (Closed-loop)</button>
+            <button class="benchmark-tab" data-tab="objectgoal">Object-Goal</button>
+            <button class="benchmark-tab" data-tab="instruction-r2r">VLN-CE R2R</button>
+            <button class="benchmark-tab" data-tab="instruction-rxr">VLN-CE RxR</button>
+            <button class="benchmark-tab" data-tab="poi">POI-Goal</button>
+            <button class="benchmark-tab" data-tab="person">Person-Following</button>
+        </div>
+
+        <!-- Point-Goal Open-Loop -->
+        <div class="benchmark-panel active" id="pointgoal-open">
+            <div class="result-table-wrapper reveal">
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Mean</th>
+                            <th>Turn</th>
+                            <th>Crossing</th>
+                            <th>Detour</th>
+                            <th>Proximity</th>
+                            <th>Crowd</th>
+                            <th>Other</th>
+                            <th>All</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="method-name">GNM</td><td>16.2</td><td>31.1</td><td>14.8</td><td>12.5</td><td>14.7</td><td>12.8</td><td>11.0</td><td>12.1</td></tr>
+                        <tr><td class="method-name">ViNT</td><td>16.5</td><td>31.1</td><td>15.4</td><td>12.9</td><td>14.8</td><td>13.3</td><td>11.6</td><td>12.6</td></tr>
+                        <tr><td class="method-name">NoMaD</td><td>19.1</td><td>35.1</td><td>18.5</td><td>15.6</td><td>18.1</td><td>14.3</td><td>12.8</td><td>12.1</td></tr>
+                        <tr><td class="method-name">CityWalker</td><td>15.2</td><td>26.6</td><td>14.1</td><td>13.9</td><td>14.3</td><td>12.0</td><td>10.4</td><td>11.5</td></tr>
+                        <tr class="highlight-row"><td class="method-name">ABot-N0</td><td class="best">11.2</td><td class="best">21.3</td><td class="best">9.8</td><td class="best">12.8</td><td class="best">8.1</td><td class="best">8.8</td><td class="best">6.3</td><td class="best">7.6</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="result-note">
+                <strong>CityWalker Benchmark (Open-Loop):</strong> MAOE metric (↓ lower is better). ABot-N0 achieves mean MAOE of <strong>11.2</strong>, significantly outperforming the previous SOTA CityWalker (15.2) — a <strong>26.3%</strong> improvement.
+            </div>
+        </div>
+
+        <!-- Point-Goal Closed-Loop -->
+        <div class="benchmark-panel" id="pointgoal-close">
+            <div class="result-table-wrapper reveal">
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>SR↑</th>
+                            <th>RC↑</th>
+                            <th>SPL↑</th>
+                            <th>DCR↑</th>
+                            <th>TCR↑</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="method-name">GNM*</td><td>43.3</td><td>62.4</td><td>37.0</td><td>26.5</td><td>28.7</td></tr>
+                        <tr><td class="method-name">ViNT*</td><td>45.6</td><td>66.2</td><td>39.5</td><td>31.4</td><td>33.8</td></tr>
+                        <tr><td class="method-name">NoMaD*</td><td>41.1</td><td>60.5</td><td>35.4</td><td>29.5</td><td>31.6</td></tr>
+                        <tr><td class="method-name">CityWalker</td><td>47.8</td><td>64.7</td><td>44.7</td><td>36.1</td><td>36.6</td></tr>
+                        <tr class="highlight-row"><td class="method-name">ABot-N0</td><td class="best">88.3</td><td class="best">92.1</td><td class="best">79.2</td><td class="best">85.1</td><td class="best">85.4</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="result-note">
+                <strong>SocNav Benchmark (Closed-Loop):</strong> ABot-N0 achieves <strong>88.3%</strong> Success Rate, nearly doubling the baseline (47.8%). Social compliance DCR reaches <strong>85.1%</strong> vs. 36.1% for the best baseline.
+            </div>
+        </div>
+
+        <!-- Object-Goal -->
+        <div class="benchmark-panel" id="objectgoal">
+            <div class="result-table-wrapper reveal">
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th colspan="2" style="border-right: 1px solid var(--border-color);">Val-Seen</th>
+                            <th colspan="2" style="border-right: 1px solid var(--border-color);">Val-Seen-Synonyms</th>
+                            <th colspan="2">Val-Unseen</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>SR↑</th>
+                            <th style="border-right: 1px solid var(--border-color);">SPL↑</th>
+                            <th>SR↑</th>
+                            <th style="border-right: 1px solid var(--border-color);">SPL↑</th>
+                            <th>SR↑</th>
+                            <th>SPL↑</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="method-name">DAgRL+OD</td><td>38.5</td><td>21.1</td><td>39.0</td><td>21.4</td><td>37.1</td><td>19.8</td></tr>
+                        <tr><td class="method-name">Uni-NaVid</td><td>41.3</td><td>21.1</td><td>43.9</td><td>21.8</td><td>39.5</td><td>19.8</td></tr>
+                        <tr><td class="method-name">MTU3D</td><td>55.0</td><td>23.6</td><td>45.0</td><td>14.7</td><td>40.8</td><td>12.1</td></tr>
+                        <tr><td class="method-name">NavFoM (Four views)</td><td>40.1</td><td>27.1</td><td>45.4</td><td>32.6</td><td>45.2</td><td class="best">31.9</td></tr>
+                        <tr class="highlight-row"><td class="method-name">ABot-N0</td><td class="best">55.3</td><td class="best">32.1</td><td class="best">55.4</td><td class="best">33.2</td><td class="best">54.0</td><td>30.5</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="result-note">
+                <strong>HM3D-OVON Benchmark:</strong> ABot-N0 surpasses MTU3D by <strong>13.2%</strong> in SR on the challenging Val-Unseen split. While MTU3D suffers a 14.2% drop from Val-Seen to Val-Unseen, ABot-N0 exhibits only <strong>1.3%</strong> decline — demonstrating exceptional open-vocabulary generalization.
+            </div>
+        </div>
+
+        <!-- Instruction-Following: R2R-CE -->
+        <div class="benchmark-panel" id="instruction-r2r">
+            <div class="result-table-wrapper reveal">
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>NE↓</th>
+                            <th>OS↑</th>
+                            <th>SR↑</th>
+                            <th>SPL↑</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="method-name">StreamVLN</td><td>4.98</td><td>64.2</td><td>56.9</td><td>51.9</td></tr>
+                        <tr><td class="method-name">InternVLA-N1 (S1+S2)</td><td>4.83</td><td>63.3</td><td>58.2</td><td>54.0</td></tr>
+                        <tr><td class="method-name">NavFoM (Four views)</td><td>4.61</td><td class="best">72.1</td><td>61.7</td><td>55.3</td></tr>
+                        <tr><td class="method-name">NaVILA</td><td>5.22</td><td>62.5</td><td>54.0</td><td>49.0</td></tr>
+                        <tr class="highlight-row"><td class="method-name">ABot-N0</td><td class="best">3.78</td><td>70.8</td><td class="best">66.4</td><td class="best">63.9</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="result-note">
+                <strong>VLN-CE R2R Val-Unseen:</strong> ABot-N0 achieves <strong>66.4%</strong> SR and <strong>63.9%</strong> SPL, surpassing NavFoM by 4.7% SR and 8.6% SPL — using only panoramic RGB without depth or odometry.
+            </div>
+        </div>
+
+        <!-- Instruction-Following: RxR-CE -->
+        <div class="benchmark-panel" id="instruction-rxr">
+            <div class="result-table-wrapper reveal">
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>NE↓</th>
+                            <th>SR↑</th>
+                            <th>SPL↑</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="method-name">StreamVLN</td><td>6.22</td><td>52.9</td><td>46.0</td></tr>
+                        <tr><td class="method-name">InternVLA-N1 (S1+S2)</td><td>5.91</td><td>53.5</td><td>46.1</td></tr>
+                        <tr><td class="method-name">NavFoM (Four views)</td><td>4.74</td><td>64.4</td><td>56.2</td></tr>
+                        <tr><td class="method-name">NaVILA</td><td>6.77</td><td>49.3</td><td>44.0</td></tr>
+                        <tr class="highlight-row"><td class="method-name">ABot-N0</td><td class="best">3.83</td><td class="best">69.3</td><td class="best">60.0</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="result-note">
+                <strong>VLN-CE RxR Val-Unseen:</strong> ABot-N0 achieves <strong>69.3%</strong> SR and <strong>60.0%</strong> SPL, outperforming NavFoM by 4.9% SR and 3.8% SPL — demonstrating strong cross-lingual generalization.
+            </div>
+        </div>
+
+        <!-- POI-Goal -->
+        <div class="benchmark-panel" id="poi">
+            <div class="result-table-wrapper reveal">
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>SR (0.1m)↑</th>
+                            <th>SR (0.2m)↑</th>
+                            <th>SR (0.3m)↑</th>
+                            <th>TR (mean)↓</th>
+                            <th>TR (best)↓</th>
+                            <th>TR (worst)↓</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="method-name">NoMaD</td><td>4.13</td><td>15.07</td><td>29.20</td><td>31.35</td><td>5.45</td><td>85.91</td></tr>
+                        <tr><td class="method-name">CityWalker</td><td>13.79</td><td>41.02</td><td>65.96</td><td>15.58</td><td>0.76</td><td>56.47</td></tr>
+                        <tr><td class="method-name">OmniNav</td><td>18.78</td><td>46.99</td><td>72.39</td><td>14.16</td><td>0.99</td><td>53.79</td></tr>
+                        <tr class="highlight-row"><td class="method-name">ABot-N0</td><td class="best">32.14</td><td class="best">71.50</td><td class="best">88.68</td><td class="best">9.84</td><td class="best">0.44</td><td class="best">51.38</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="result-note">
+                <strong>BridgeNav Dataset:</strong> ABot-N0 achieves <strong>70.1%</strong> improvement at the strictest 0.1m threshold and reduces average trajectory deviation by <strong>30.5%</strong>.
+            </div>
+        </div>
+
+        <!-- Person-Following -->
+        <div class="benchmark-panel" id="person">
+            <div class="result-table-wrapper reveal">
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th colspan="3" style="border-right: 1px solid var(--border-color);">Single-Target (STT)</th>
+                            <th colspan="3" style="border-right: 1px solid var(--border-color);">Distracted (DT)</th>
+                            <th colspan="3">Ambiguity (AT)</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>SR↑</th><th>TR↑</th><th style="border-right: 1px solid var(--border-color);">CR↓</th>
+                            <th>SR↑</th><th>TR↑</th><th style="border-right: 1px solid var(--border-color);">CR↓</th>
+                            <th>SR↑</th><th>TR↑</th><th>CR↓</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="method-name">TrackVLA</td><td>85.1</td><td>78.6</td><td>1.65</td><td>57.6</td><td>63.2</td><td>5.80</td><td>50.2</td><td>63.7</td><td>17.1</td></tr>
+                        <tr><td class="method-name">NavFoM</td><td>85.0</td><td>80.5</td><td>-</td><td>61.4</td><td>68.2</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                        <tr><td class="method-name">TrackVLA++</td><td>86.0</td><td>81.0</td><td>2.10</td><td>66.5</td><td>68.8</td><td>4.71</td><td>51.2</td><td>63.4</td><td>15.9</td></tr>
+                        <tr class="highlight-row"><td class="method-name">ABot-N0</td><td class="best">86.9</td><td class="best">87.6</td><td>8.54</td><td class="best">66.7</td><td class="best">75.4</td><td>11.6</td><td class="best">67.3</td><td class="best">79.5</td><td>7.05</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="result-note">
+                <strong>EVT-Bench:</strong> ABot-N0 achieves <strong>16.1%</strong> improvement in both SR and TR on the challenging Ambiguity Tracking task, even surpassing multi-view methods with single-view input.
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ============================================
+     AGENTIC NAVIGATION SYSTEM
+     ============================================ -->
+<section class="section" id="agentic">
+    <div class="section-inner">
+        <div class="section-header reveal">
+            <div class="section-tag"><i class="fas fa-robot"></i> Agentic System</div>
+            <h2 class="section-title">Agentic Navigation System</h2>
+            <p class="section-desc">A deployable framework that augments ABot-N0 with planning, topological memory, and self-reflection for robust long-horizon real-world missions.</p>
+        </div>
+
+        <div class="agentic-layout">
+            <div class="figure-block reveal">
+                <img src="static/images/agentic.jpg" alt="Agentic Navigation System">
+                <div class="fig-caption">
+                    <strong>Agentic Navigation System Overview.</strong> The system integrates ABot-N0 with an agentic framework comprising Agentic Planner, Actor, short-term Episodic Memory, and long-term Topo-Memory to handle complex real-world navigation tasks.
+                </div>
+            </div>
+
+            <div class="figure-block reveal">
+                <img src="static/images/agent_sys.jpg" alt="Task Execution Pipeline">
+                <div class="fig-caption">
+                    <strong>Task Execution Pipeline.</strong> (1) Global Navigation employs Approaching (Point-Goal) to traverse known spaces using topological memory, (2) Local Navigation utilizes Reaching (Object-Goal/POI-Goal) for precise target discovery and Interaction (Instruction-Following, Person-Following) for dynamic engagement, and (3) Neural Controller executes low-level velocity-based motion control.
+                </div>
+            </div>
+
+            <div class="agentic-features reveal">
+                <div class="agentic-feature">
+                    <h4>🗺️ Map-as-Memory (Topo-Memory)</h4>
+                    <p>A hierarchical topological memory with 4 layers (Block, Road, Function, Object/POI) that enables cross-scale spatial knowledge deposition and dynamic updating — from residential interiors to urban environments.</p>
+                </div>
+                <div class="agentic-feature">
+                    <h4>🧭 Agentic Planner</h4>
+                    <p>Leverages VLM reasoning to decompose ambiguous user instructions into executable sub-tasks via Chain-of-Thought. Implements a "Coarse-to-Fine" strategy: Point-Goal for long-range approach, then Object/POI-Goal for precise local reaching.</p>
+                </div>
+                <div class="agentic-feature">
+                    <h4>🔄 Closed-loop Self-Reflection</h4>
+                    <p>A VLM-based Self-Reflector assesses sub-task completion. On failure, it diagnoses the cause and triggers re-planning — emulating human-like self-correction for robust long-horizon autonomy.</p>
+                </div>
+                <div class="agentic-feature">
+                    <h4>🎮 Neural Controller</h4>
+                    <p>A high-speed reactive layer operating at 10Hz+ on edge devices. Translates abstract VLA waypoints into precise velocity commands (v<sub>x</sub>, v<sub>y</sub>, v<sub>yaw</sub>) using LiDAR-based occupancy mapping.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ============================================
+     HARDWARE / DEPLOYMENT
+     ============================================ -->
+<section class="section" id="deployment">
+    <div class="section-inner">
+        <div class="section-header reveal">
+            <div class="section-tag"><i class="fas fa-microchip"></i> Real-World Deployment</div>
+            <h2 class="section-title">From Model to Robot</h2>
+            <p class="section-desc">Successfully deployed on Unitree Go2 quadrupedal robot with 2Hz VLA inference and 10Hz closed-loop control.</p>
+        </div>
+
+        <div class="deploy-grid reveal">
+            <div class="deploy-specs">
+                <div class="spec-item">
+                    <div class="spec-icon"><i class="fas fa-paw"></i></div>
+                    <div>
+                        <h4>Unitree Go2 X</h4>
+                        <p>Quadrupedal robot with 12 actuated DOF, dynamically stable locomotion across diverse terrains.</p>
+                    </div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-icon"><i class="fas fa-camera"></i></div>
+                    <div>
+                        <h4>270° Vision Coverage</h4>
+                        <p>Three monocular RGB cameras (H120°×V90° each) providing comprehensive panoramic perception.</p>
+                    </div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-icon"><i class="fas fa-satellite-dish"></i></div>
+                    <div>
+                        <h4>4D LiDAR + RTK-GNSS</h4>
+                        <p>Unitree 4D LiDAR L2 for occupancy mapping and RTK-GNSS for global localization.</p>
+                    </div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-icon"><i class="fas fa-bolt"></i></div>
+                    <div>
+                        <h4>NVIDIA Jetson Orin NX</h4>
+                        <p>157 TOPS, 16GB RAM — all VLA inference runs onboard at 2Hz with only 3% performance reduction.</p>
+                    </div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-icon"><i class="fas fa-cloud"></i></div>
+                    <div>
+                        <h4>Hybrid Cloud-Edge Architecture</h4>
+                        <p>Planner on cloud (RTX 4090), VLA + Controller on edge — ensures autonomous operation even without network.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deploy-image">
+                <img src="static/images/hardware.jpg" alt="Hardware Platform">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--
+<div class="glow-divider"></div>
+
+<section class="section demo-section" id="demos">
+    <div class="section-inner">
+        <div class="section-header reveal">
+            <div class="section-tag"><i class="fas fa-video"></i> Demonstrations</div>
+            <h2 class="section-title">Real-World Demo Videos</h2>
+            <p class="section-desc">Watch ABot-N0 navigate complex indoor and outdoor environments with autonomous decision-making.</p>
+        </div>
+
+        <div class="demo-grid reveal">
+            <div class="demo-card">
+                <div class="demo-placeholder">
+                    <div class="play-icon"><i class="fas fa-play"></i></div>
+                    <span class="demo-label">🏙️ Outdoor Navigation</span>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="demo-placeholder">
+                    <div class="play-icon"><i class="fas fa-play"></i></div>
+                    <span class="demo-label">🏢 Indoor Navigation</span>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="demo-placeholder">
+                    <div class="play-icon"><i class="fas fa-play"></i></div>
+                    <span class="demo-label">🚶 Person Following</span>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="demo-placeholder">
+                    <div class="play-icon"><i class="fas fa-play"></i></div>
+                    <span class="demo-label">📍 POI-Goal Navigation</span>
+                </div>
+            </div>
+            <div class="demo-card full-width">
+                <div class="demo-placeholder">
+                    <div class="play-icon"><i class="fas fa-play"></i></div>
+                    <span class="demo-label">🤖 Long-Horizon Agentic Mission (Indoor-Outdoor Transition)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="glow-divider"></div>
+-->
+
+<!-- ============================================
+     DEPLOYMENT VISUALIZATION
+     ============================================ -->
+<section class="section" id="visualization">
+    <div class="section-inner">
+        <div class="section-header reveal">
+            <div class="section-tag"><i class="fas fa-images"></i> Visualization</div>
+            <h2 class="section-title">Deployment Visualization</h2>
+            <p class="section-desc">Real-world navigation trajectories and application scenarios across diverse environments.</p>
+        </div>
+
+        <div class="vis-pillars">
+
+            <!-- Pillar 1: Short-Range Tasks -->
+            <div class="vis-pillar reveal">
+                <div class="vis-pillar-header">
+                    <div class="vis-pillar-icon"><i class="fas fa-crosshairs"></i></div>
+                    <div class="vis-pillar-meta">
+                        <h3>Short-Range Navigation Tasks</h3>
+                        <p>Single-skill atomic tasks: Object-Goal, Instruction-Following, Point-Goal, POI-Goal, Person-Following</p>
+                    </div>
+                </div>
+                <div class="vis-pillar-body">
+                    <div class="vis-grid cols-2">
+                        <div class="vis-item">
+                            <div class="vis-img-wrap" onclick="openLightbox(this.querySelector('img'))">
+                                <img src="static/images/vis/obj_goal.jpeg" alt="Object-Goal Visualization">
+                            </div>
+                            <div class="vis-label">
+                                <span class="vis-tag">OBJ-GOAL</span>
+                                Object-Goal navigation: find target objects in real environments
+                            </div>
+                        </div>
+                        <div class="vis-item">
+                            <div class="vis-img-wrap" onclick="openLightbox(this.querySelector('img'))">
+                                <img src="static/images/vis/ins_goal.jpeg" alt="Instruction-Following Visualization">
+                            </div>
+                            <div class="vis-label">
+                                <span class="vis-tag">INS-FOLLOW</span>
+                                Instruction-Following: execute natural language navigation commands
+                            </div>
+                        </div>
+                        <div class="vis-item">
+                            <div class="vis-img-wrap" onclick="openLightbox(this.querySelector('img'))">
+                                <img src="static/images/vis/point_goal.jpg" alt="Point-Goal Visualization">
+                            </div>
+                            <div class="vis-label">
+                                <span class="vis-tag">POINT-GOAL</span>
+                                Point-Goal navigation: reach precise metric coordinates in real environments
+                            </div>
+                        </div>
+                        <!-- Placeholder: POI-Goal -->
+                        <div class="vis-placeholder">
+                            <i class="fas fa-plus-circle"></i> POI-Goal — Coming Soon
+                        </div>
+                        <!-- Placeholder: Person-Following -->
+                        <div class="vis-placeholder">
+                            <i class="fas fa-plus-circle"></i> Person-Following — Coming Soon
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pillar 2: Long-Range Tasks -->
+            <div class="vis-pillar reveal">
+                <div class="vis-pillar-header">
+                    <div class="vis-pillar-icon"><i class="fas fa-route"></i></div>
+                    <div class="vis-pillar-meta">
+                        <h3>Long-Range Agentic Navigation</h3>
+                        <p>Multi-stage missions requiring planning, re-planning, and cross-environment transitions</p>
+                    </div>
+                </div>
+                <div class="vis-pillar-body">
+                    <div class="vis-grid cols-3">
+                        <div class="vis-item">
+                            <div class="vis-img-wrap" onclick="openLightbox(this.querySelector('img'))">
+                                <img src="static/images/vis/indoor.jpg" alt="Indoor Long-Range Navigation">
+                            </div>
+                            <div class="vis-label">
+                                <span class="vis-tag">INDOOR</span>
+                                Indoor agentic mission with multi-skill orchestration
+                            </div>
+                        </div>
+                        <div class="vis-item">
+                            <div class="vis-img-wrap" onclick="openLightbox(this.querySelector('img'))">
+                                <img src="static/images/vis/outdoor.jpg" alt="Outdoor Long-Range Navigation 1">
+                            </div>
+                            <div class="vis-label">
+                                <span class="vis-tag">OUTDOOR</span>
+                                Outdoor long-range navigation to the closest park
+                            </div>
+                        </div>
+                        <div class="vis-item">
+                            <div class="vis-img-wrap" onclick="openLightbox(this.querySelector('img'))">
+                                <img src="static/images/vis/outdoor2.jpg" alt="Outdoor Long-Range Navigation 2">
+                            </div>
+                            <div class="vis-label">
+                                <span class="vis-tag">CROSS-ENV</span>
+                                Cross-environment: outdoor-to-indoor transition mission
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pillar 3: Applications -->
+            <div class="vis-pillar reveal">
+                <div class="vis-pillar-header">
+                    <div class="vis-pillar-icon"><i class="fas fa-robot"></i></div>
+                    <div class="vis-pillar-meta">
+                        <h3>Real-World Applications</h3>
+                        <p>Smart Follow & Load Carry, Guiding Assistance, AI Companion — powered by ABot-N0</p>
+                    </div>
+                </div>
+                <div class="vis-pillar-body">
+                    <div class="vis-grid cols-1" style="grid-template-columns: 1fr;">
+                        <div class="vis-item">
+                            <div class="vis-img-wrap" onclick="openLightbox(this.querySelector('img'))">
+                                <img src="static/images/vis/application.jpeg" alt="Real-World Applications">
+                            </div>
+                            <div class="vis-label">
+                                <span class="vis-tag">APPLICATIONS</span>
+                                Three application scenarios: Smart Follow & Load Carry, Guiding Assistance, and AI Companion with VQA capabilities
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ============================================
+     BIBTEX
+     ============================================ -->
+<section class="section" id="citation">
+    <div class="section-inner">
+        <div class="section-header reveal">
+            <div class="section-tag"><i class="fas fa-quote-right"></i> Citation</div>
+            <h2 class="section-title">BibTeX</h2>
+        </div>
+
+        <div class="bibtex-wrapper reveal">
+            <div class="bibtex-box">
+                <button class="bibtex-copy" onclick="copyBibtex()"><i class="fas fa-copy"></i> Copy</button>
+<pre>@article{abotn0_2025,
+  title={ABot-N0: Technical Report on the VLA Foundation 
+         Model for Versatile Embodied Navigation},
+  author={AMAP CV Lab},
+  year={2025}
+}</pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Lightbox Overlay -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+    <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
+<!-- ============================================
+     FOOTER
+     ============================================ -->
+<footer class="footer">
+    <p>ABot-N0 &copy; 2025 AMAP CV Lab &nbsp;|&nbsp; <a href="#">Project Page</a> &nbsp;|&nbsp; <!-- <a href="#">GitHub</a> &nbsp;|&nbsp; --> <a href="#">Paper</a></p>
+</footer>
+
+<!-- ============================================
+     SCRIPTS
+     ============================================ -->
+<script>
+// ============================================
+// PARTICLE SYSTEM
+// ============================================
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let mouse = { x: null, y: null };
+const PARTICLE_COUNT = 80;
+const CONNECTION_DISTANCE = 150;
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.radius = Math.random() * 2 + 0.5;
+        this.opacity = Math.random() * 0.5 + 0.1;
+    }
+
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+        // Mouse interaction
+        if (mouse.x !== null) {
+            const dx = mouse.x - this.x;
+            const dy = mouse.y - this.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 200) {
+                this.vx += dx * 0.00005;
+                this.vy += dy * 0.00005;
+            }
+        }
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 212, 255, ${this.opacity})`;
+        ctx.fill();
+    }
+}
+
+function initParticles() {
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push(new Particle());
+    }
+}
+
+function drawConnections() {
+    for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < CONNECTION_DISTANCE) {
+                const opacity = (1 - dist / CONNECTION_DISTANCE) * 0.15;
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.strokeStyle = `rgba(0, 212, 255, ${opacity})`;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+    drawConnections();
+    requestAnimationFrame(animateParticles);
+}
+
+window.addEventListener('resize', () => {
+    resizeCanvas();
+});
+
+window.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+});
+
+resizeCanvas();
+initParticles();
+animateParticles();
+
+// ============================================
+// NAVBAR SCROLL EFFECT
+// ============================================
+window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+
+// ============================================
+// SCROLL REVEAL
+// ============================================
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+revealElements.forEach(el => revealObserver.observe(el));
+
+// ============================================
+// COUNTER ANIMATION
+// ============================================
+function animateCounters() {
+    const counters = document.querySelectorAll('.hero-stat .number');
+    counters.forEach(counter => {
+        const target = parseFloat(counter.dataset.target);
+        const suffix = counter.dataset.suffix || '';
+        const isFloat = target % 1 !== 0;
+        const duration = 2000;
+        const startTime = performance.now();
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = target * eased;
+
+            if (isFloat) {
+                counter.textContent = current.toFixed(1) + suffix;
+            } else {
+                counter.textContent = Math.floor(current).toLocaleString() + suffix;
+            }
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+
+        requestAnimationFrame(update);
+    });
+}
+
+// Trigger counter animation when hero is visible
+const heroObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateCounters();
+            heroObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.3 });
+
+heroObserver.observe(document.querySelector('.hero-stats'));
+
+// ============================================
+// BENCHMARK TABS
+// ============================================
+document.querySelectorAll('.benchmark-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.benchmark-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.benchmark-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+    });
+});
+
+// ============================================
+// TRAJECTORY SCROLL
+// ============================================
+function scrollTraj(direction) {
+    const container = document.getElementById('trajScroll');
+    const cardWidth = 300; // card width + gap
+    container.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
+}
+
+// ============================================
+// LIGHTBOX
+// ============================================
+function openLightbox(imgEl) {
+    const overlay = document.getElementById('lightboxOverlay');
+    const lightboxImg = document.getElementById('lightboxImg');
+    lightboxImg.src = imgEl.src;
+    lightboxImg.alt = imgEl.alt;
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    const overlay = document.getElementById('lightboxOverlay');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+});
+
+// Also enable lightbox for all figure-block images
+document.querySelectorAll('.figure-block img, .gallery-card img, .hero-image-wrapper img').forEach(img => {
+    img.addEventListener('click', () => openLightbox(img));
+});
+
+// ============================================
+// COPY BIBTEX
+// ============================================
+function copyBibtex() {
+    const bibtex = `@article{abotn0_2025,
+  title={ABot-N0: Technical Report on the VLA Foundation Model for Versatile Embodied Navigation},
+  author={AMAP CV Lab},
+  year={2025}
+}`;
+    navigator.clipboard.writeText(bibtex).then(() => {
+        const btn = document.querySelector('.bibtex-copy');
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+        }, 2000);
+    });
+}
+
+// ============================================
+// SMOOTH SCROLL FOR NAV LINKS
+// ============================================
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
+</script>
+
 </body>
 </html>
+
