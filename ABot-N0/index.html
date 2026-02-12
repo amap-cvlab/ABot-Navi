@@ -1697,12 +1697,12 @@
             transform: scale(1.03);
         }
 
-        /* Short-range tasks: wider images ~3:1 */
+        /* Short-horizon tasks: wider images ~3:1 */
         .vis-pillar:nth-child(1) .vis-img-wrap {
             aspect-ratio: 16 / 6;
         }
 
-        /* Long-range tasks: mixed ratios, use balanced ratio */
+        /* Long-horizon tasks: mixed ratios, use balanced ratio */
         .vis-pillar:nth-child(2) .vis-img-wrap {
             aspect-ratio: 16 / 7;
         }
@@ -2614,7 +2614,7 @@
                 </div>
                 <div class="agentic-feature">
                     <h4>🧭 Agentic Planner</h4>
-                    <p>Leverages VLM reasoning to decompose ambiguous user instructions into executable sub-tasks via Chain-of-Thought. Implements a "Coarse-to-Fine" strategy: Point-Goal for long-range approach, then Object/POI-Goal for precise local reaching.</p>
+                    <p>Leverages VLM reasoning to decompose ambiguous user instructions into executable sub-tasks via Chain-of-Thought. Implements a "Coarse-to-Fine" strategy: Point-Goal for long-horizon approach, then Object/POI-Goal for precise local reaching.</p>
                 </div>
                 <div class="agentic-feature">
                     <h4>🔄 Closed-loop Self-Reflection</h4>
@@ -2703,12 +2703,12 @@
 
         <div class="video-pillars">
 
-            <!-- Pillar 1: Long-Range Agentic Missions -->
+            <!-- Pillar 1: Long-Horizon Agentic Missions -->
             <div class="video-pillar reveal">
                 <div class="video-pillar-header">
                     <div class="video-pillar-icon"><i class="fas fa-route"></i></div>
                     <div class="video-pillar-meta">
-                        <h3>Long-Range Agentic Missions</h3>
+                        <h3>Long-Horizon Agentic Missions</h3>
                         <p>Multi-stage missions with planning, re-planning, and cross-environment transitions</p>
                     </div>
                 </div>
@@ -2722,7 +2722,7 @@
                             </div>
                             <div class="video-label">
                                 <span class="video-tag">OUTDOOR</span>
-                                Outdoor Long-Range Mission
+                                Outdoor Long-Horizon Mission
                             </div>
                         </div>
                         <div class="video-item">
@@ -2733,7 +2733,7 @@
                             </div>
                             <div class="video-label">
                                 <span class="video-tag">INDOOR</span>
-                                Indoor Long-Range Mission
+                                Indoor Long-Horizon Mission
                             </div>
                         </div>
                     </div>
@@ -2866,12 +2866,12 @@
 
         <div class="vis-pillars">
 
-            <!-- Pillar 1: Short-Range Tasks -->
+            <!-- Pillar 1: Short-Horizon Tasks -->
             <div class="vis-pillar reveal">
                 <div class="vis-pillar-header">
                     <div class="vis-pillar-icon"><i class="fas fa-crosshairs"></i></div>
                     <div class="vis-pillar-meta">
-                        <h3>Short-Range Navigation Tasks</h3>
+                        <h3>Short-Horizon Navigation Tasks</h3>
                         <p>Single-skill atomic tasks: Object-Goal, Instruction-Following, Point-Goal, POI-Goal, Person-Following</p>
                     </div>
                 </div>
@@ -2926,12 +2926,12 @@
                 </div>
             </div>
 
-            <!-- Pillar 2: Long-Range Tasks -->
+            <!-- Pillar 2: Long-Horizon Tasks -->
             <div class="vis-pillar reveal">
                 <div class="vis-pillar-header">
                     <div class="vis-pillar-icon"><i class="fas fa-route"></i></div>
                     <div class="vis-pillar-meta">
-                        <h3>Long-Range Agentic Navigation</h3>
+                        <h3>Long-Horizon Agentic Navigation</h3>
                         <p>Multi-stage missions requiring planning, re-planning, and cross-environment transitions</p>
                     </div>
                 </div>
@@ -2939,7 +2939,7 @@
                     <div class="vis-grid cols-3">
                         <div class="vis-item">
                             <div class="vis-img-wrap" onclick="openLightbox(this.querySelector('img'))">
-                                <img src="static/images/vis/indoor.jpg" alt="Indoor Long-Range Navigation">
+                                <img src="static/images/vis/indoor.jpg" alt="Indoor Long-Horizon Navigation">
                             </div>
                             <div class="vis-label">
                                 <span class="vis-tag">INDOOR</span>
@@ -2948,16 +2948,16 @@
                         </div>
                         <div class="vis-item">
                             <div class="vis-img-wrap" onclick="openLightbox(this.querySelector('img'))">
-                                <img src="static/images/vis/outdoor.jpg" alt="Outdoor Long-Range Navigation 1">
+                                <img src="static/images/vis/outdoor.jpg" alt="Outdoor Long-Horizon Navigation 1">
                             </div>
                             <div class="vis-label">
                                 <span class="vis-tag">OUTDOOR</span>
-                                Outdoor long-range navigation to the closest park
+                                Outdoor long-horizon navigation to the closest park
                             </div>
                         </div>
                         <div class="vis-item">
                             <div class="vis-img-wrap" onclick="openLightbox(this.querySelector('img'))">
-                                <img src="static/images/vis/outdoor2.jpg" alt="Outdoor Long-Range Navigation 2">
+                                <img src="static/images/vis/outdoor2.jpg" alt="Outdoor Long-Horizon Navigation 2">
                             </div>
                             <div class="vis-label">
                                 <span class="vis-tag">CROSS-ENV</span>
