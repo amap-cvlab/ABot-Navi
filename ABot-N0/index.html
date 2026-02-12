@@ -985,72 +985,6 @@
             border-color: rgba(255, 255, 255, 0.4);
         }
 
-        /* Video Lightbox */
-        .video-lightbox-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            background: rgba(0, 0, 0, 0.92);
-            backdrop-filter: blur(16px);
-            align-items: center;
-            justify-content: center;
-            cursor: default;
-            padding: 40px;
-            animation: fadeIn 0.25s ease;
-        }
-
-        .video-lightbox-overlay.active {
-            display: flex;
-        }
-
-        .video-lightbox-container {
-            position: relative;
-            width: 90vw;
-            max-width: 1100px;
-            aspect-ratio: 16 / 9;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
-            background: #000;
-        }
-
-        .video-lightbox-container iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-
-        .video-lightbox-close {
-            position: absolute;
-            top: -48px;
-            right: 0;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
-            font-size: 1.1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .video-lightbox-close:hover {
-            background: rgba(255, 255, 255, 0.18);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: scale(1.05);
-        }
-
-        @media (max-width: 768px) {
-            .video-lightbox-overlay { padding: 20px; }
-            .video-lightbox-container { width: 96vw; border-radius: 10px; }
-            .video-lightbox-close { top: -44px; width: 36px; height: 36px; font-size: 1rem; }
-        }
-
         .traj-card-body {
             padding: 16px 18px 20px;
         }
@@ -3089,14 +3023,6 @@
     <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
 </div>
 
-<!-- Video Lightbox -->
-<div class="video-lightbox-overlay" id="videoLightbox" onclick="closeVideoLightbox()">
-    <div class="video-lightbox-container" onclick="event.stopPropagation()">
-        <button class="video-lightbox-close" onclick="closeVideoLightbox()"><i class="fas fa-times"></i></button>
-        <iframe id="videoLightboxIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-    </div>
-</div>
-
 <!-- ============================================
      FOOTER
      ============================================ -->
@@ -3321,29 +3247,22 @@ function closeLightbox() {
 }
 
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        closeLightbox();
-        closeVideoLightbox();
-    }
+    if (e.key === 'Escape') closeLightbox();
 });
 
 // ============================================
 // VIDEO LIGHTBOX
 // ============================================
 function loadYouTube(thumbEl, videoId) {
-    const overlay = document.getElementById('videoLightbox');
-    const iframe = document.getElementById('videoLightboxIframe');
+    const wrap = thumbEl.parentElement;
+    const iframe = document.createElement('iframe');
     iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeVideoLightbox() {
-    const overlay = document.getElementById('videoLightbox');
-    const iframe = document.getElementById('videoLightboxIframe');
-    overlay.classList.remove('active');
-    iframe.src = '';
-    document.body.style.overflow = '';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.allowFullscreen = true;
+    iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:0;';
+    thumbEl.style.opacity = '0';
+    thumbEl.style.pointerEvents = 'none';
+    wrap.appendChild(iframe);
 }
 
 // Try upgrading video thumbnails: hqdefault → maxresdefault → sddefault fallback
