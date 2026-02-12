@@ -985,6 +985,72 @@
             border-color: rgba(255, 255, 255, 0.4);
         }
 
+        /* Video Lightbox */
+        .video-lightbox-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(16px);
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+            padding: 40px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .video-lightbox-overlay.active {
+            display: flex;
+        }
+
+        .video-lightbox-container {
+            position: relative;
+            width: 90vw;
+            max-width: 1100px;
+            aspect-ratio: 16 / 9;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+            background: #000;
+        }
+
+        .video-lightbox-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .video-lightbox-close {
+            position: absolute;
+            top: -48px;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .video-lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .video-lightbox-overlay { padding: 20px; }
+            .video-lightbox-container { width: 96vw; border-radius: 10px; }
+            .video-lightbox-close { top: -44px; width: 36px; height: 36px; font-size: 1rem; }
+        }
+
         .traj-card-body {
             padding: 16px 18px 20px;
         }
@@ -1333,35 +1399,192 @@
         }
 
         /* ============================================
-           DEMO VIDEO SECTION
+           VIDEO DEMO SECTION
            ============================================ */
-        .demo-section {
+        .video-demo-section {
             background: linear-gradient(180deg, var(--bg-primary) 0%, rgba(0, 212, 255, 0.03) 50%, var(--bg-primary) 100%);
         }
 
-        .demo-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
+        .video-pillars {
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
         }
 
-        .demo-card {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
+        .video-pillar {
+            border-radius: 18px;
             border: 1px solid var(--border-color);
             background: var(--bg-card);
+            overflow: hidden;
             transition: all 0.4s ease;
-            aspect-ratio: 16/9;
         }
 
-        .demo-card:hover {
-            border-color: rgba(0, 212, 255, 0.3);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        .video-pillar:hover {
+            border-color: rgba(0, 212, 255, 0.2);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
         }
 
-        .demo-card .demo-placeholder {
+        .video-pillar-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 212, 255, 0.02);
+        }
+
+        .video-pillar-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            color: #fff;
+        }
+
+        .video-pillar:nth-child(1) .video-pillar-icon { background: linear-gradient(135deg, #f59e0b, #ec4899); }
+        .video-pillar:nth-child(2) .video-pillar-icon { background: linear-gradient(135deg, #10b981, #00d4ff); }
+        .video-pillar:nth-child(3) .video-pillar-icon { background: linear-gradient(135deg, #00d4ff, #4d7cff); }
+
+        .video-pillar-meta h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .video-pillar-meta p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .video-pillar-body {
+            padding: 24px 28px;
+        }
+
+        .video-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .video-grid.vcols-1 { grid-template-columns: 1fr; }
+        .video-grid.vcols-2 { grid-template-columns: repeat(2, 1fr); }
+        .video-grid.vcols-3 { grid-template-columns: repeat(3, 1fr); }
+
+        .video-item {
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-item:hover {
+            border-color: rgba(0, 212, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-item .video-embed-wrap {
+            width: 100%;
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .video-item .video-embed-wrap iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* YouTube thumbnail lazy-load overlay */
+        .video-item .video-thumb {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+            transition: all 0.4s ease;
+        }
+
+        .video-item .video-thumb::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            transition: background 0.3s ease;
+        }
+
+        .video-item:hover .video-thumb::after {
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .video-item .video-thumb .play-btn {
+            position: relative;
+            z-index: 2;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .video-item:hover .video-thumb .play-btn {
+            transform: scale(1.1);
+            background: rgba(255, 0, 0, 1);
+            box-shadow: 0 8px 40px rgba(255, 0, 0, 0.4);
+        }
+
+        .video-item .video-label {
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .video-item .video-label .video-tag {
+            font-size: 0.72rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 2px 8px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .video-pillar:nth-child(1) .video-tag { background: rgba(245, 158, 11, 0.1); color: var(--accent-orange); }
+        .video-pillar:nth-child(2) .video-tag { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); }
+        .video-pillar:nth-child(3) .video-tag { background: rgba(0, 212, 255, 0.1); color: var(--accent-cyan); }
+
+        /* Placeholder for videos without URL */
+        .video-item .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             display: flex;
@@ -1369,42 +1592,33 @@
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
-            gap: 12px;
+            gap: 10px;
         }
 
-        .demo-card .play-icon {
-            width: 64px;
-            height: 64px;
+        .video-item .video-placeholder .placeholder-icon {
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            background: var(--gradient-main);
+            background: rgba(255, 255, 255, 0.06);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            color: #fff;
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
-            transition: all 0.3s ease;
+            font-size: 1.3rem;
+            color: var(--text-muted);
         }
 
-        .demo-card:hover .play-icon {
-            transform: scale(1.1);
-            box-shadow: 0 8px 40px rgba(0, 212, 255, 0.5);
+        .video-item .video-placeholder .placeholder-text {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
         }
 
-        .demo-card .demo-label {
-            font-size: 0.92rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .demo-card.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .demo-card video, .demo-card iframe {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        @media (max-width: 768px) {
+            .video-pillar-header { padding: 18px 20px; gap: 14px; }
+            .video-pillar-body { padding: 18px 20px; }
+            .video-pillar-icon { width: 40px; height: 40px; font-size: 1.1rem; }
+            .video-pillar-meta h3 { font-size: 1rem; }
+            .video-grid.vcols-2, .video-grid.vcols-3 { grid-template-columns: 1fr; }
         }
 
         /* ============================================
@@ -1714,6 +1928,7 @@
             .deploy-grid { grid-template-columns: 1fr; }
             .agentic-features { grid-template-columns: 1fr; }
             .data-highlight-grid { grid-template-columns: repeat(2, 1fr); }
+            .video-grid.vcols-3 { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 768px) {
@@ -1841,7 +2056,7 @@
         <li><a href="#results">Results</a></li>
         <li><a href="#agentic">Agentic System</a></li>
         <li><a href="#deployment">Deployment</a></li>
-        <li><a href="#visualization">Demos</a></li>
+        <li><a href="#video-demos">Demos</a></li>
         <li class="nav-dropdown">
             <span class="nav-dropdown-trigger">More Research <i class="fas fa-chevron-down chevron"></i></span>
             <div class="nav-dropdown-menu">    
@@ -1921,7 +2136,7 @@
     <div class="hero-actions">
         <a href="https://github.com/amap-cvlab/ABot-Navigation/blob/ABot-N0/ABot-N0_Technical_Report.pdf" target="_blank" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Read Paper</a>
         <a href="https://github.com/amap-cvlab/ABot-Navigation/tree/ABot-N0" target="_blank" class="btn btn-secondary"><i class="fab fa-github"></i> GitHub</a>
-        <a href="#visualization" class="btn btn-secondary"><i class="fas fa-play-circle"></i> Watch Demos</a>
+        <a href="#video-demos" class="btn btn-secondary"><i class="fas fa-play-circle"></i> Watch Demos</a>
     </div>
 
     <div class="hero-image-wrapper">
@@ -2539,54 +2754,170 @@
     </div>
 </section>
 
-<!--
 <div class="glow-divider"></div>
 
-<section class="section demo-section" id="demos">
+<!-- ============================================
+     VIDEO DEMOS
+     ============================================ -->
+<section class="section video-demo-section" id="video-demos">
     <div class="section-inner">
         <div class="section-header reveal">
-            <div class="section-tag"><i class="fas fa-video"></i> Demonstrations</div>
+            <div class="section-tag"><i class="fas fa-video"></i> Video Demonstrations</div>
             <h2 class="section-title">Real-World Demo Videos</h2>
-            <p class="section-desc">Watch ABot-N0 navigate complex indoor and outdoor environments with autonomous decision-making.</p>
+            <p class="section-desc">Watch ABot-N0 navigate complex real-world environments — from single-task atomic skills to long-horizon agentic missions.</p>
         </div>
 
-        <div class="demo-grid reveal">
-            <div class="demo-card">
-                <div class="demo-placeholder">
-                    <div class="play-icon"><i class="fas fa-play"></i></div>
-                    <span class="demo-label">🏙️ Outdoor Navigation</span>
+        <div class="video-pillars">
+
+            <!-- Pillar 1: Long-Range Agentic Missions -->
+            <div class="video-pillar reveal">
+                <div class="video-pillar-header">
+                    <div class="video-pillar-icon"><i class="fas fa-route"></i></div>
+                    <div class="video-pillar-meta">
+                        <h3>Long-Range Agentic Missions</h3>
+                        <p>Multi-stage missions with planning, re-planning, and cross-environment transitions</p>
+                    </div>
+                </div>
+                <div class="video-pillar-body">
+                    <div class="video-grid vcols-2">
+                        <div class="video-item">
+                            <div class="video-embed-wrap">
+                                <div class="video-thumb" style="background-image: url('https://img.youtube.com/vi/TZl9OfadPJg/hqdefault.jpg');" onclick="loadYouTube(this, 'TZl9OfadPJg')">
+                                    <div class="play-btn"><i class="fas fa-play"></i></div>
+                                </div>
+                            </div>
+                            <div class="video-label">
+                                <span class="video-tag">OUTDOOR</span>
+                                Outdoor Long-Range Mission
+                            </div>
+                        </div>
+                        <div class="video-item">
+                            <div class="video-embed-wrap">
+                                <div class="video-thumb" style="background-image: url('https://img.youtube.com/vi/pm3SP6HgwkI/hqdefault.jpg');" onclick="loadYouTube(this, 'pm3SP6HgwkI')">
+                                    <div class="play-btn"><i class="fas fa-play"></i></div>
+                                </div>
+                            </div>
+                            <div class="video-label">
+                                <span class="video-tag">INDOOR</span>
+                                Indoor Long-Range Mission
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="demo-card">
-                <div class="demo-placeholder">
-                    <div class="play-icon"><i class="fas fa-play"></i></div>
-                    <span class="demo-label">🏢 Indoor Navigation</span>
+
+            <!-- Pillar 2: Real-World Applications -->
+            <div class="video-pillar reveal">
+                <div class="video-pillar-header">
+                    <div class="video-pillar-icon"><i class="fas fa-robot"></i></div>
+                    <div class="video-pillar-meta">
+                        <h3>Real-World Applications</h3>
+                        <p>Practical application scenarios: AI Companion, Guide Dog Assistance — powered by ABot-N0</p>
+                    </div>
+                </div>
+                <div class="video-pillar-body">
+                    <div class="video-grid vcols-2">
+                        <div class="video-item">
+                            <div class="video-embed-wrap">
+                                <div class="video-thumb" style="background-image: url('https://img.youtube.com/vi/7UEisQYBF9k/hqdefault.jpg');" onclick="loadYouTube(this, '7UEisQYBF9k')">
+                                    <div class="play-btn"><i class="fas fa-play"></i></div>
+                                </div>
+                            </div>
+                            <div class="video-label">
+                                <span class="video-tag">COMPANION</span>
+                                Interactive Companion
+                            </div>
+                        </div>
+                        <div class="video-item">
+                            <div class="video-embed-wrap">
+                                <div class="video-thumb" style="background-image: url('https://img.youtube.com/vi/7DIoE-g671g/hqdefault.jpg');" onclick="loadYouTube(this, '7DIoE-g671g')">
+                                    <div class="play-btn"><i class="fas fa-play"></i></div>
+                                </div>
+                            </div>
+                            <div class="video-label">
+                                <span class="video-tag">GUIDE DOG</span>
+                                Guide Dog Assistance
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="demo-card">
-                <div class="demo-placeholder">
-                    <div class="play-icon"><i class="fas fa-play"></i></div>
-                    <span class="demo-label">🚶 Person Following</span>
+
+            <!-- Pillar 3: Single-Task Capabilities -->
+            <div class="video-pillar reveal">
+                <div class="video-pillar-header">
+                    <div class="video-pillar-icon"><i class="fas fa-crosshairs"></i></div>
+                    <div class="video-pillar-meta">
+                        <h3>Single-Task Capabilities</h3>
+                        <p>Atomic navigation skills: Point-Goal, POI-Goal, Object-Goal, Instruction-Following, Person-Following</p>
+                    </div>
+                </div>
+                <div class="video-pillar-body">
+                    <div class="video-grid vcols-3">
+                        <div class="video-item">
+                            <div class="video-embed-wrap">
+                                <div class="video-thumb" style="background-image: url('https://img.youtube.com/vi/--pVvU9BOX4/hqdefault.jpg');" onclick="loadYouTube(this, '--pVvU9BOX4')">
+                                    <div class="play-btn"><i class="fas fa-play"></i></div>
+                                </div>
+                            </div>
+                            <div class="video-label">
+                                <span class="video-tag">POINT-GOAL</span>
+                                Point-Goal Navigation
+                            </div>
+                        </div>
+                        <div class="video-item">
+                            <div class="video-embed-wrap">
+                                <div class="video-thumb" style="background-image: url('https://img.youtube.com/vi/6YAANa1Oico/hqdefault.jpg');" onclick="loadYouTube(this, '6YAANa1Oico')">
+                                    <div class="play-btn"><i class="fas fa-play"></i></div>
+                                </div>
+                            </div>
+                            <div class="video-label">
+                                <span class="video-tag">POI-GOAL</span>
+                                POI-Goal Navigation
+                            </div>
+                        </div>
+                        <div class="video-item">
+                            <div class="video-embed-wrap">
+                                <div class="video-thumb" style="background-image: url('https://img.youtube.com/vi/tfv4L3knYlk/hqdefault.jpg');" onclick="loadYouTube(this, 'tfv4L3knYlk')">
+                                    <div class="play-btn"><i class="fas fa-play"></i></div>
+                                </div>
+                            </div>
+                            <div class="video-label">
+                                <span class="video-tag">OBJ-GOAL</span>
+                                Object-Goal Navigation
+                            </div>
+                        </div>
+                        <div class="video-item">
+                            <div class="video-embed-wrap">
+                                <div class="video-thumb" style="background-image: url('https://img.youtube.com/vi/WdNuaxVtb3A/hqdefault.jpg');" onclick="loadYouTube(this, 'WdNuaxVtb3A')">
+                                    <div class="play-btn"><i class="fas fa-play"></i></div>
+                                </div>
+                            </div>
+                            <div class="video-label">
+                                <span class="video-tag">INS-FOLLOW</span>
+                                Instruction-Following
+                            </div>
+                        </div>
+                        <div class="video-item">
+                            <div class="video-embed-wrap">
+                                <div class="video-thumb" style="background-image: url('https://img.youtube.com/vi/dZftcxjN9f8/hqdefault.jpg');" onclick="loadYouTube(this, 'dZftcxjN9f8')">
+                                    <div class="play-btn"><i class="fas fa-play"></i></div>
+                                </div>
+                            </div>
+                            <div class="video-label">
+                                <span class="video-tag">PERSON-FOLLOW</span>
+                                Person-Following
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="demo-card">
-                <div class="demo-placeholder">
-                    <div class="play-icon"><i class="fas fa-play"></i></div>
-                    <span class="demo-label">📍 POI-Goal Navigation</span>
-                </div>
-            </div>
-            <div class="demo-card full-width">
-                <div class="demo-placeholder">
-                    <div class="play-icon"><i class="fas fa-play"></i></div>
-                    <span class="demo-label">🤖 Long-Horizon Agentic Mission (Indoor-Outdoor Transition)</span>
-                </div>
-            </div>
+
         </div>
     </div>
 </section>
 
 <div class="glow-divider"></div>
--->
 
 <!-- ============================================
      DEPLOYMENT VISUALIZATION
@@ -2756,6 +3087,14 @@
 <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
     <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
+<!-- Video Lightbox -->
+<div class="video-lightbox-overlay" id="videoLightbox" onclick="closeVideoLightbox()">
+    <div class="video-lightbox-container" onclick="event.stopPropagation()">
+        <button class="video-lightbox-close" onclick="closeVideoLightbox()"><i class="fas fa-times"></i></button>
+        <iframe id="videoLightboxIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
 </div>
 
 <!-- ============================================
@@ -2982,7 +3321,61 @@ function closeLightbox() {
 }
 
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'Escape') {
+        closeLightbox();
+        closeVideoLightbox();
+    }
+});
+
+// ============================================
+// VIDEO LIGHTBOX
+// ============================================
+function loadYouTube(thumbEl, videoId) {
+    const overlay = document.getElementById('videoLightbox');
+    const iframe = document.getElementById('videoLightboxIframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeVideoLightbox() {
+    const overlay = document.getElementById('videoLightbox');
+    const iframe = document.getElementById('videoLightboxIframe');
+    overlay.classList.remove('active');
+    iframe.src = '';
+    document.body.style.overflow = '';
+}
+
+// Try upgrading video thumbnails: hqdefault → maxresdefault → sddefault fallback
+document.querySelectorAll('.video-thumb').forEach(thumb => {
+    const currentBg = thumb.style.backgroundImage;
+    if (currentBg && currentBg.includes('hqdefault.jpg')) {
+        const extractUrl = s => s.replace(/url\(['"]?|['"]?\)/g, '');
+        const maxUrl = currentBg.replace('hqdefault.jpg', 'maxresdefault.jpg');
+        const sdUrl  = currentBg.replace('hqdefault.jpg', 'sddefault.jpg');
+        // Try maxresdefault first
+        const maxImg = new Image();
+        maxImg.onload = function() {
+            if (this.naturalWidth > 200) {
+                thumb.style.backgroundImage = maxUrl;
+            } else {
+                // maxresdefault is a placeholder, try sddefault
+                trySD();
+            }
+        };
+        maxImg.onerror = trySD;
+        maxImg.src = extractUrl(maxUrl);
+
+        function trySD() {
+            const sdImg = new Image();
+            sdImg.onload = function() {
+                if (this.naturalWidth > 200) {
+                    thumb.style.backgroundImage = sdUrl;
+                }
+            };
+            sdImg.src = extractUrl(sdUrl);
+        }
+    }
 });
 
 // Also enable lightbox for all figure-block images
