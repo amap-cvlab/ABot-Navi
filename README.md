@@ -5,7 +5,7 @@
 ### A Unified VLA Foundation Model for Versatile Embodied Navigation
 
 [![Paper](https://img.shields.io/badge/📄-Technical_Report-blue)](https://github.com/amap-cvlab/ABot-Navigation/blob/ABot-N0/ABot-N0_Technical_Report.pdf)
-[![Project Page](https://img.shields.io/badge/🌐-Project_Page-green)](https://amap-cvlab.github.io/ABot-Navigation/)
+[![Project Page](https://img.shields.io/badge/🌐-Project_Page-green)](https://amap-cvlab.github.io/ABot-Navigation/ABot-N0/)
 
 **AMAP CV Lab**
 
@@ -99,7 +99,7 @@ We are committed to progressively open-sourcing resources to support the researc
 |:---:|:---|:---:|
 | Phase 1 | Technical Report | ✅ Released |
 | Phase 2 | Data             | 🔜 Coming Soon |
-| Phase 3 | Code & Model Weights | 🔜 Coming Soon |
+| Phase 3 | Code             | 🔜 Coming Soon |
 
 > **⚠️ Note on Data Release**: Due to privacy and security concerns associated with certain data, we will conduct thorough data cleaning and de-identification before releasing a compliant version for community research use. We prioritize data compliance over release speed — thank you for your patience and understanding.
 
