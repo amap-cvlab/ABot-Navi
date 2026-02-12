@@ -15,7 +15,7 @@
 
 ## 🔥 News
 
-- **[2025/07]** 🎉 Technical Report released! [Read the paper](https://github.com/amap-cvlab/ABot-Navigation/blob/ABot-N0/ABot-N0_Technical_Report.pdf)
+- **[2026/02]** 🎉 Technical Report released! [Read the paper](https://github.com/amap-cvlab/ABot-Navigation/blob/ABot-N0/ABot-N0_Technical_Report.pdf)
 
 ## 📖 Introduction
 
