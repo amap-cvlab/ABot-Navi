@@ -4,7 +4,7 @@
 
 ### A Unified VLA Foundation Model for Versatile Embodied Navigation
 
-[![Paper](https://img.shields.io/badge/📄-Technical_Report-blue)](https://github.com/amap-cvlab/ABot-Navigation/blob/ABot-N0/ABot-N0_Technical_Report.pdf)
+[![Paper](https://img.shields.io/badge/📄-Technical_Report-blue)](https://arxiv.org/pdf/2602.11598)
 [![Project Page](https://img.shields.io/badge/🌐-Project_Page-green)](https://amap-cvlab.github.io/ABot-Navigation/ABot-N0/)
 
 **AMAP CV Lab**
@@ -15,7 +15,7 @@
 
 ## 🔥 News
 
-- **[2026/02]** 🎉 Technical Report released! [Read the paper](https://github.com/amap-cvlab/ABot-Navigation/blob/ABot-N0/ABot-N0_Technical_Report.pdf)
+- **[2026/02]** 🎉 Technical Report released! [Read the paper](https://arxiv.org/pdf/2602.11598)
 
 ## 📖 Introduction
 
@@ -201,7 +201,15 @@ We are committed to progressively open-sourcing resources to support the researc
 If you find this work useful, please consider citing:
 
 ```bibtex
-Coming soon.
+@misc{chu2026abotn0technicalreportvla,
+      title={ABot-N0: Technical Report on the VLA Foundation Model for Versatile Embodied Navigation}, 
+      author={Zedong Chu and Shichao Xie and Xiaolong Wu and Yanfen Shen and Minghua Luo and Zhengbo Wang and Fei Liu and Xiaoxu Leng and Junjun Hu and Mingyang Yin and Jia Lu and Yingnan Guo and Kai Yang and Jiawei Han and Xu Chen and Yanqing Zhu and Yuxiang Zhao and Xin Liu and Yirong Yang and Ye He and Jiahang Wang and Yang Cai and Tianlin Zhang and Li Gao and Liu Liu and Mingchao Sun and Fan Jiang and Chiyu Wang and Zhicheng Liu and Hongyu Pan and Honglin Han and Zhining Gu and Kuan Yang and Jianfang Zhang and Di Jing and Zihao Guan and Wei Guo and Guoqing Liu and Di Yang and Xiangpo Yang and Menglin Yang and Hongguang Xing and Weiguo Li and Mu Xu},
+      year={2026},
+      eprint={2602.11598},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2602.11598}, 
+}
 ```
 
 ## 📜 License
@@ -210,4 +218,4 @@ This project is released under the [Apache 2.0 License](LICENSE).
 
 ## 🙏 Acknowledgments
 
-This work is developed by **AMAP CV Lab**. See the [Technical Report](https://github.com/amap-cvlab/ABot-Navigation/blob/ABot-N0/ABot-N0_Technical_Report.pdf) for a full list of contributors.
+This work is developed by **AMAP CV Lab**. See the [Technical Report](https://arxiv.org/pdf/2602.11598) for a full list of contributors.
