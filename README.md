@@ -19,6 +19,11 @@
 
 ## 📖 Introduction
 
+<div align="center">
+<video src="https://github.com/amap-cvlab/ABot-Navigation/raw/ABot-N0/assets/videos/intro.mp4" width="80%" controls autoplay loop muted>
+</video>
+</div>
+
 **ABot-N0** is a unified **Vision-Language-Action (VLA)** foundation model that achieves a **"Grand Unification"** across **5 core embodied navigation tasks**:
 
 | Task | Description |
@@ -56,6 +61,13 @@ ABot-N0 follows a hierarchical "Brain-Action" design comprising three pillars:
 
 ## 📦 Data Engine
 
+<div align="center">
+<a href="https://www.youtube.com/watch?v=EonbUL-1uPo">
+<img src="https://img.youtube.com/vi/EonbUL-1uPo/maxresdefault.jpg" width="80%" alt="ABot-N0 Data Engine Video">
+</a>
+<p><em>▶️ Click to watch the Data Engine video</em></p>
+</div>
+
 The **ABot-N0 Data Engine** is the largest embodied navigation data pipeline, integrating three synergistic layers:
 
 - **High-Fidelity 3D Scene Ecosystem**: 7,802 scenes (indoor: homes, offices, malls, stations; outdoor: intersections, parks, virtual city) covering 10.3 km²
@@ -78,6 +90,87 @@ Beyond the foundation model, we propose an **Agentic Navigation System** for rea
 - **Topo-Memory (Map-as-Memory)**: Hierarchical topological memory for cross-scale spatial knowledge (Block → Road → Function → Object/POI layers)
 - **Neural Controller**: High-speed reactive control (>10Hz) bridging strategic waypoints and real-time execution
 - **Hardware**: Unitree Go2 quadrupedal robot + NVIDIA Jetson Orin NX (157 TOPS)
+
+## 🎬 Video Demos
+
+### 🌍 Long-Horizon Agentic Missions
+
+<table>
+<tr>
+<td align="center" width="50%">
+<a href="https://www.youtube.com/watch?v=pm3SP6HgwkI">
+<img src="https://img.youtube.com/vi/pm3SP6HgwkI/maxresdefault.jpg" width="100%" alt="Indoor Long-Range Mission">
+</a>
+<br><b>▶️ Indoor Long-Range Mission</b>
+</td>
+<td align="center" width="50%">
+<a href="https://www.youtube.com/watch?v=TZl9OfadPJg">
+<img src="https://img.youtube.com/vi/TZl9OfadPJg/maxresdefault.jpg" width="100%" alt="Outdoor Long-Range Mission">
+</a>
+<br><b>▶️ Outdoor Long-Range Mission</b>
+</td>
+</tr>
+</table>
+
+### 🤝 Real-World Applications
+
+<table>
+<tr>
+<td align="center" width="50%">
+<a href="https://www.youtube.com/watch?v=7DIoE-g671g">
+<img src="https://img.youtube.com/vi/7DIoE-g671g/maxresdefault.jpg" width="100%" alt="Guide Dog Assistance">
+</a>
+<br><b>▶️ Guide Dog Assistance</b>
+</td>
+<td align="center" width="50%">
+<a href="https://www.youtube.com/watch?v=7UEisQYBF9k">
+<img src="https://img.youtube.com/vi/7UEisQYBF9k/maxresdefault.jpg" width="100%" alt="Interactive Companion">
+</a>
+<br><b>▶️ Interactive Companion</b>
+</td>
+</tr>
+</table>
+
+### 🎯 Single-Task Capabilities
+
+<table>
+<tr>
+<td align="center" width="33%">
+<a href="https://www.youtube.com/watch?v=--pVvU9BOX4">
+<img src="https://img.youtube.com/vi/--pVvU9BOX4/maxresdefault.jpg" width="100%" alt="Point-Goal Navigation">
+</a>
+<br><b>▶️ Point-Goal</b>
+</td>
+<td align="center" width="33%">
+<a href="https://www.youtube.com/watch?v=tfv4L3knYlk">
+<img src="https://img.youtube.com/vi/tfv4L3knYlk/maxresdefault.jpg" width="100%" alt="Object-Goal Navigation">
+</a>
+<br><b>▶️ Object-Goal</b>
+</td>
+<td align="center" width="33%">
+<a href="https://www.youtube.com/watch?v=WdNuaxVtb3A">
+<img src="https://img.youtube.com/vi/WdNuaxVtb3A/maxresdefault.jpg" width="100%" alt="Instruction-Following">
+</a>
+<br><b>▶️ Instruction-Following</b>
+</td>
+</tr>
+<tr>
+<td align="center" width="33%">
+<a href="https://www.youtube.com/watch?v=6YAANa1Oico">
+<img src="https://img.youtube.com/vi/6YAANa1Oico/maxresdefault.jpg" width="100%" alt="POI-Goal Navigation">
+</a>
+<br><b>▶️ POI-Goal</b>
+</td>
+<td align="center" width="33%">
+<a href="https://www.youtube.com/watch?v=dZftcxjN9f8">
+<img src="https://img.youtube.com/vi/dZftcxjN9f8/maxresdefault.jpg" width="100%" alt="Person-Following">
+</a>
+<br><b>▶️ Person-Following</b>
+</td>
+<td align="center" width="33%">
+</td>
+</tr>
+</table>
 
 ## 📈 Benchmark Results
 
