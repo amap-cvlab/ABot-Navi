@@ -20,7 +20,7 @@
 ## 📖 Introduction
 
 <div align="center">
-<video src="https://github.com/amap-cvlab/ABot-Navigation/raw/ABot-N0/assets/videos/intro.mp4" width="80%" controls autoplay loop muted>
+<video src="https://github.com/user-attachments/assets/a2c2772a-c86e-454a-9d00-a232b71b8a87" width="80%" controls autoplay loop muted>
 </video>
 </div>
 
